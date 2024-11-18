@@ -40,43 +40,43 @@ public class MessagesController {
         messageInput.clear();
     }
 
-    @FXML
-    private void listMessages() {
-        try {
-            handleListMessages();
-        } catch (IOException e) {
-            System.err.println("Error listing messages: " + e.getMessage());
-            // Show an error alert to the user
-            showAlert("Error", "Failed to retrieve messages", e.getMessage());
-        }
-    }
+//    @FXML
+//    private void listMessages() {
+//        try {
+//            handleListMessages();
+//        } catch (IOException e) {
+//            System.err.println("Error listing messages: " + e.getMessage());
+//            // Show an error alert to the user
+//            //showAlert("Error", "Failed to retrieve messages", e.getMessage());
+//        }
+//    }
 
 
-    private void handleListMessages() throws IOException {
-        if (client == null) {
-            throw new IllegalStateException("Client is not initialized");
-        }
-
-        List<Message> messages = client.getMessages();
-
-        if (messages.isEmpty()) {
-            // If there are no messages, update the UI to show this
-            messageListView.getItems().clear();
-            messageListView.getItems().add("No messages");
-        } else {
-            // Clear the existing items in the ListView
-            messageListView.getItems().clear();
-
-            // Add each message to the ListView
-            for (Message message : messages) {
-                String displayText = String.format("[%s] %s: %s",
-                        message.getTimestamp().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
-                        message.getSenderId(),
-                        message.getContent());
-                messageListView.getItems().add(displayText);
-            }
-        }
-    }
+//    private void handleListMessages() throws IOException {
+//        if (client == null) {
+//            throw new IllegalStateException("Client is not initialized");
+//        }
+//
+//        List<Message> messages = client.getMessages();
+//
+//        if (messages.isEmpty()) {
+//            // If there are no messages, update the UI to show this
+//            messageListView.getItems().clear();
+//            messageListView.getItems().add("No messages");
+//        } else {
+//            // Clear the existing items in the ListView
+//            messageListView.getItems().clear();
+//
+//            // Add each message to the ListView
+//            for (Message message : messages) {
+//                String displayText = String.format("[%s] %s: %s",
+//                        message.getTimestamp().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
+//                        message.getSenderId(),
+//                        message.getContent());
+//                messageListView.getItems().add(displayText);
+//            }
+//        }
+//    }
 
 
     private void handleSendMessage() {
@@ -89,6 +89,6 @@ public class MessagesController {
 
     public void initialize() {
         sendMessageButton.setOnAction(event -> handleSendMessage());
-        listMessagesButton.setOnAction(event -> handleListMessages());
+        //listMessagesButton.setOnAction(event -> handleListMessages());
     }
 }

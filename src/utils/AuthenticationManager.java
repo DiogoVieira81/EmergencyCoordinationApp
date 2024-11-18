@@ -42,7 +42,7 @@ public class AuthenticationManager {
 
         String id = UUID.randomUUID().toString();
         String hashedPassword = hashPassword(password);
-        User newUser = new User(id, name, username, hashedPassword, role);
+        User newUser = new User(name, hashedPassword, role);
         users.put(username, newUser);
         return newUser;
     }

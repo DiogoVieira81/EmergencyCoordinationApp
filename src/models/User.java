@@ -4,9 +4,11 @@ import enums.UserRole;
 import org.bson.Document;
 
 import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
+    private AtomicInteger counter = new AtomicInteger(0)
     private String id;
     private String name;
     private String username;
@@ -14,10 +16,10 @@ public class User implements Serializable {
     private UserRole role;
     private boolean isOnline;
 
-    public User(String id, String name, String username, String password, UserRole role) {
-        this.id = id;
+    public User(String name, String password, UserRole role) {
         this.name = name;
-        this.username = username;
+        this.id = this.name + this.counter.incrementAndGet();
+        this.username = this.id;
         this.password = password;
         this.role = role;
         this.isOnline = false;

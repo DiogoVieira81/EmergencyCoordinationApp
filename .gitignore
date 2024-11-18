@@ -27,3 +27,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+/src/resources/fxml/
+/src/views/
+/src/controllers/

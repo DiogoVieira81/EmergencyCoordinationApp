@@ -194,7 +194,6 @@ public class Client {
     }
 
 
-
     public Message getNextMessage() {
         return messageQueue.poll();
     }
@@ -263,30 +262,31 @@ public class Client {
             throw new IOException("Error reading server response", e);
         }
     }
-
-    public List<Channel> getChannels() throws IOException {
-        try {
-            // Create a request to get the list of channels
-            ProtocolHandler.Request getChannelsRequest = ProtocolHandler.createGetChannelsRequest();
-
-            // Send the request to the server
-            out.writeObject(getChannelsRequest);
-            out.flush();
-
-            // Wait for the response from the server
-            Object serverResponse = in.readObject();
-            if (serverResponse instanceof ProtocolHandler.Response) {
-                ProtocolHandler.Response response = (ProtocolHandler.Response) serverResponse;
-                if (response.isSuccess()) {
-                    return (List<Channel>) response.getData();
-                } else {
-                    throw new IOException("Failed to get channels: " + response.getMessage());
-                }
-            } else {
-                throw new IOException("Unexpected response type: " + serverResponse.getClass().getName());
-            }
-        } catch (ClassNotFoundException e) {
-            throw new IOException("Error reading server response", e);
-        }
-    }
 }
+
+//    public List<Channel> getChannels() throws IOException {
+//        try {
+//            // Create a request to get the list of channels
+//            ProtocolHandler.Request getChannelsRequest = ProtocolHandler.createGetChannelsRequest();
+//
+//            // Send the request to the server
+//            out.writeObject(getChannelsRequest);
+//            out.flush();
+//
+//            // Wait for the response from the server
+//            Object serverResponse = in.readObject();
+//            if (serverResponse instanceof ProtocolHandler.Response) {
+//                ProtocolHandler.Response response = (ProtocolHandler.Response) serverResponse;
+//                if (response.isSuccess()) {
+//                    return (List<Channel>) response.getData();
+//                } else {
+//                    throw new IOException("Failed to get channels: " + response.getMessage());
+//                }
+//            } else {
+//                throw new IOException("Unexpected response type: " + serverResponse.getClass().getName());
+//            }
+//        } catch (ClassNotFoundException e) {
+//            throw new IOException("Error reading server response", e);
+//        }
+//    }
+//}

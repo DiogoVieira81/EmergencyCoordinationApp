@@ -67,9 +67,7 @@ public class DatabaseManager {
             // Check if admin user exists
             if (getUserByUsername("admin") == null) {
                 User adminUser = new User(
-                        "admin_id",
                         "Admin",
-                        "admin",
                         hashPassword("adminpassword"),
                         UserRole.ADMIN
                 );
@@ -93,9 +91,7 @@ public class DatabaseManager {
         Document doc = usersCollection.find(new Document("username", username)).first();
         if (doc != null) {
             return new User(
-                    doc.getString("_id"),
                     doc.getString("name"),
-                    doc.getString("username"),
                     doc.getString("password"),
                     UserRole.valueOf(doc.getString("role"))
             );
@@ -113,9 +109,7 @@ public class DatabaseManager {
 
         for (Document doc : documents) {
             User user = new User(
-                    doc.getString("_id"),
                     doc.getString("name"),
-                    doc.getString("username"),
                     doc.getString("password"),
                     UserRole.valueOf(doc.getString("role"))
             );
@@ -155,9 +149,7 @@ public class DatabaseManager {
         Document doc = collection.find(Filters.eq("username", username)).first();
         if (doc != null) {
             return new User(
-                    doc.getString("_id"),
                     doc.getString("name"),
-                    doc.getString("username"),
                     doc.getString("password"),
                     UserRole.valueOf(doc.getString("role"))
             );
