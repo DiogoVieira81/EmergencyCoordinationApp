@@ -1,7 +1,9 @@
 package client;
 
 import enums.OperationType;
+import enums.UserRole;
 import models.*;
+import server.DatabaseManager;
 import utils.ProtocolHandler;
 
 import java.io.EOFException;
@@ -72,10 +74,11 @@ public class Client {
             out.writeObject(loginRequest);
             out.flush(); // Ensure the request is sent immediately
 
-            ProtocolHandler.Response serverResponse = (ProtocolHandler.Response) in.readObject(); //TODO fix Network error during login: invalid type code: 00 java.io.StreamCorruptedException: invalid type code: 00
+            ProtocolHandler.Response serverResponse = (ProtocolHandler.Response) in.readObject();
             if (serverResponse != null) {
                 // Check if login was successful
                 if (serverResponse.isSuccess()) {
+                    this.setCurrentUser((User) serverResponse.getData());
                     System.out.println("Login successful: " + serverResponse.getMessage());
                     return true; // Login was successful
                 } else {
@@ -202,6 +205,10 @@ public class Client {
         return this.currentUser;
     }
 
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
+    }
+
     public Notification getNextNotification() {
         return notificationQueue.poll();
     }
@@ -236,7 +243,7 @@ public class Client {
         out.writeObject(ProtocolHandler.createLogoutRequest());
         ProtocolHandler.Response response = (ProtocolHandler.Response) in.readObject();
         if (response.isSuccess()) {
-            currentUser = null;
+            this.setCurrentUser(null);
         } else {
             throw new IOException("Logout failed: " + response.getMessage());
         }
@@ -262,31 +269,55 @@ public class Client {
             throw new IOException("Error reading server response", e);
         }
     }
+
+    public void approveOperation(String operationId) throws IOException {
+        try {
+            ProtocolHandler.Request request = ProtocolHandler.createApproveOperationRequest(operationId);
+
+            out.writeObject(request);
+            out.flush();
+
+            ProtocolHandler.Response response = (ProtocolHandler.Response) in.readObject();
+
+            if (response.isSuccess()) {
+                System.out.println("Operação aprovada com sucesso!");
+            } else {
+                System.out.println("Falha ao aprovar a operação: " + response.getMessage());
+            }
+        } catch (ClassNotFoundException e) {
+            throw new IOException("Erro ao ler a resposta do servidor", e);
+        }
+    }
+
+    public void registerUser(String name, String password, UserRole userRole) throws IOException {
+        if (currentUser == null || currentUser.getRole() != UserRole.ADMIN) {
+            System.out.println("Apenas administradores podem registar novos usuários.");
+            return;
+        }
+
+        try {
+            ProtocolHandler.Request request = new ProtocolHandler.createRegisterUserRequest()//TODO CRIAR REGISTO DE UTILIZADOR NA BD.
+                                                        //TODO REQUEST TEM DE ENVIAR O UTILIZADOR PARA O SERVIDOR VERIFICAR SE ELE JÁ EXISTE NA BD
+                                            //TODO O SERVIDOR DEVOLVE UMA RESPOSTA POSITIVA OU NEGATIVA E ASSIM O REGISTO É FEITO OU NÃO
+
+
+            out.writeObject(request);
+            out.flush();
+
+            ProtocolHandler.Response response = (ProtocolHandler.Response) in.readObject();
+
+            if (response.isSuccess()) {
+                User user = (User) response.getData();
+                System.out.println("Nome: " + user.getName());
+                DatabaseManager.saveUser(user);
+                System.out.println("Registo de usuário bem-sucedido!");
+            } else {
+                System.out.println("Falha no registo: " + response.getMessage());
+            }
+        } catch (ClassNotFoundException e) {
+            throw new IOException("Erro ao ler a resposta do servidor", e);
+        }
+    }
+
 }
 
-//    public List<Channel> getChannels() throws IOException {
-//        try {
-//            // Create a request to get the list of channels
-//            ProtocolHandler.Request getChannelsRequest = ProtocolHandler.createGetChannelsRequest();
-//
-//            // Send the request to the server
-//            out.writeObject(getChannelsRequest);
-//            out.flush();
-//
-//            // Wait for the response from the server
-//            Object serverResponse = in.readObject();
-//            if (serverResponse instanceof ProtocolHandler.Response) {
-//                ProtocolHandler.Response response = (ProtocolHandler.Response) serverResponse;
-//                if (response.isSuccess()) {
-//                    return (List<Channel>) response.getData();
-//                } else {
-//                    throw new IOException("Failed to get channels: " + response.getMessage());
-//                }
-//            } else {
-//                throw new IOException("Unexpected response type: " + serverResponse.getClass().getName());
-//            }
-//        } catch (ClassNotFoundException e) {
-//            throw new IOException("Error reading server response", e);
-//        }
-//    }
-//}

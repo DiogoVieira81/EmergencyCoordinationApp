@@ -12,7 +12,7 @@ public class ProtocolHandler {
 
     public enum RequestType {
         LOGIN, LOGOUT, SEND_MESSAGE, JOIN_CHANNEL, LEAVE_CHANNEL,
-        CHANNEL_LIST, USER_LIST, INITIATE_OPERATION, APPROVE_OPERATION, GET_MESSAGES, GET_NOTIFICATIONS, CREATE_CHANNEL
+        CHANNEL_LIST, USER_LIST, INITIATE_OPERATION, APPROVE_OPERATION, GET_MESSAGES, GET_NOTIFICATIONS, CREATE_CHANNEL, REGISTER_USER
     }
 
     public static class Request implements Serializable {
@@ -48,6 +48,15 @@ public class ProtocolHandler {
 
     public static Request createLogoutRequest() {
         return new Request(RequestType.LOGOUT);
+    }
+
+    public static Request createRegisterUserRequest(User user) {
+        Request request = new Request(RequestType.REGISTER_USER);
+        request.addData("name", user.getName());
+        request.addData("password", user.getPassword());
+        request.addData("role", user.getRole());
+
+        return request;
     }
 
     public static Request createNotificationRequest() {

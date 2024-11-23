@@ -18,11 +18,11 @@ import java.util.List;
 public class DatabaseManager {
     private static final String CONNECTION_STRING = "mongodb+srv://8200690:ydZaOosEtnKCXisa@emergencysituationapp.8g6p1.mongodb.net/?retryWrites=true&w=majority&appName=EmergencySituationApp";
     private static final String DATABASE_NAME = "EmergencySituationApp";
-    private MongoClient mongoClient;
-    private MongoDatabase database;
-    private MongoCollection<Document> usersCollection;
+    private static MongoClient mongoClient;
+    private static MongoDatabase database;
+    private static MongoCollection<Document> usersCollection;
 
-    public DatabaseManager() {
+    static {
         try {
             String connectionString = CONNECTION_STRING;
             mongoClient = MongoClients.create(connectionString);
@@ -43,7 +43,7 @@ public class DatabaseManager {
     }
 
     // Helper method to check if a collection exists
-    private boolean collectionExists(String collectionName) {
+    private static boolean collectionExists(String collectionName) {
         for (String name : database.listCollectionNames()) {
             if (name.equalsIgnoreCase(collectionName)) {
                 return true;
@@ -52,12 +52,12 @@ public class DatabaseManager {
         return false;
     }
     // checks if the user exists
-    public boolean userExists(String username) {
+    public static boolean userExists(String username) {
         Document user = usersCollection.find(new Document("username", username)).first();
         return user != null;
     }
 
-    public void initializeDatabase() {
+    public static void initializeDatabase() {
         try {
             if (usersCollection == null) {
                 System.err.println("Users collection is not initialized!");
@@ -83,7 +83,7 @@ public class DatabaseManager {
     }
 
 
-    public User getUserByUsername(String username) {
+    public static User getUserByUsername(String username) {
         if (usersCollection == null) {
             System.err.println("Users collection is not initialized!");
             return null;
@@ -99,7 +99,7 @@ public class DatabaseManager {
         return null;
     }
 
-    public List<User> getUsers() {
+    public static List<User> getUsers() {
         if (usersCollection == null) {
             System.err.println("Users collection is not initilized!");
             return null;
@@ -119,7 +119,7 @@ public class DatabaseManager {
         return users;
     }
 
-    private String hashPassword(String password) {
+    private static String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] hashedBytes = md.digest(password.getBytes());
@@ -134,7 +134,7 @@ public class DatabaseManager {
     }
 
 
-    public void saveUser(User user) {
+    public static void saveUser(User user) {
         MongoCollection<Document> collection = database.getCollection("users");
         Document doc = new Document("_id", user.getId())
                 .append("name", user.getName())
@@ -144,7 +144,7 @@ public class DatabaseManager {
         collection.insertOne(doc);
     }
 
-    public User getUser(String username) {
+    public static User getUser(String username) {
         MongoCollection<Document> collection = database.getCollection("users");
         Document doc = collection.find(Filters.eq("username", username)).first();
         if (doc != null) {
@@ -157,7 +157,7 @@ public class DatabaseManager {
         return null;
     }
 
-    public void saveMessage(Message message) {
+    public static void saveMessage(Message message) {
         MongoCollection<Document> collection = database.getCollection("messages");
         Document doc = new Document("_id", message.getId())
                 .append("senderId", message.getSenderId())
@@ -169,7 +169,7 @@ public class DatabaseManager {
         collection.insertOne(doc);
     }
 
-    public List<Message> getMessagesForUser(String userId) {
+    public static List<Message> getMessagesForUser(String userId) {
         List<Message> messages = new ArrayList<>();
         MongoCollection<Document> collection = database.getCollection("messages");
         FindIterable<Document> docs = collection.find(
@@ -190,7 +190,7 @@ public class DatabaseManager {
         return messages;
     }
 
-    private List<String> getUserChannels(String userId) {
+    private static List<String> getUserChannels(String userId) {
         List<String> channels = new ArrayList<>();
         MongoCollection<Document> collection = database.getCollection("user_channels");
         FindIterable<Document> docs = collection.find(Filters.eq("userId", userId));
@@ -200,7 +200,7 @@ public class DatabaseManager {
         return channels;
     }
 
-    public void saveChannel(Channel channel) {
+    public static void saveChannel(Channel channel) {
         MongoCollection<Document> collection = database.getCollection("channels");
         Document doc = new Document("_id", channel.getId())
                 .append("name", channel.getName())
@@ -210,7 +210,7 @@ public class DatabaseManager {
         collection.insertOne(doc);
     }
 
-    public void saveOperation(Operation operation) {
+    public static void saveOperation(Operation operation) {
         MongoCollection<Document> collection = database.getCollection("operations");
         Document doc = new Document("_id", operation.getId())
                 .append("name", operation.getName())
@@ -222,7 +222,7 @@ public class DatabaseManager {
         collection.insertOne(doc);
     }
 
-    public void updateOperationStatus(String operationId, Operation.OperationStatus status) {
+    public static void updateOperationStatus(String operationId, Operation.OperationStatus status) {
         MongoCollection<Document> collection = database.getCollection("operations");
         collection.updateOne(
                 Filters.eq("_id", operationId),
@@ -230,7 +230,7 @@ public class DatabaseManager {
         );
     }
 
-    public List<Notification> getNotificationsForUser(String userId) {
+    public static List<Notification> getNotificationsForUser(String userId) {
         List<Notification> notifications = new ArrayList<>();
         MongoCollection<Document> collection = database.getCollection("notifications");
         FindIterable<Document> docs = collection.find(Filters.eq("userId", userId));
@@ -247,7 +247,7 @@ public class DatabaseManager {
         return notifications;
     }
 
-    public void updateNotification(Notification notification) {
+    public static void updateNotification(Notification notification) {
         MongoCollection<Document> collection = database.getCollection("notifications");
         collection.updateOne(
                 Filters.eq("_id", notification.getId()),
@@ -256,7 +256,7 @@ public class DatabaseManager {
     }
 
 
-    public List<Channel> getAllChannels() {
+    public static List<Channel> getAllChannels() {
         List<Channel> channels = new ArrayList<>();
         MongoCollection<Document> collection = database.getCollection("channels");
         FindIterable<Document> docs = collection.find();
@@ -272,13 +272,13 @@ public class DatabaseManager {
     }
 
 
-    public void close() {
+    public static void close() {
         if (mongoClient != null) {
             mongoClient.close();
         }
     }
 
-    public boolean addUserToChannel(String userId, String channelId) {
+    public static boolean addUserToChannel(String userId, String channelId) {
         MongoCollection<Document> channelsCollection = database.getCollection("channels");
         MongoCollection<Document> userChannelsCollection = database.getCollection("user_channels");
 

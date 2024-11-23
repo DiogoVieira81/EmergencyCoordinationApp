@@ -5,15 +5,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="069c91f5-17fb-43ce-95ab-2d784f969fb2" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/operations.log" beforeDir="false" afterPath="$PROJECT_DIR$/operations.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/EmergencyCoordinationApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/EmergencyCoordinationCLI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controllers/MessagesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controllers/MessagesController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controllers/ChannelsController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controllers/DashboardController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controllers/LoginController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controllers/MessagesController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controllers/NotificationsController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controllers/OperationsController.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/models/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/resources/fxml/ChannelsView.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/resources/fxml/DashboardView.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/resources/fxml/LoginView.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/resources/fxml/MessageListView.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/resources/fxml/MessagesView.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/resources/fxml/NotificationsView.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/resources/fxml/OperationsView.fxml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/server/DatabaseManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/DatabaseManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/AuthenticationManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/AuthenticationManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/UserInterface.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/ProtocolHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/ProtocolHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/ChannelListView.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/CreateChannelView.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,6 +70,7 @@
   "keyToString": {
     "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
     "Application.EmergencyCoordinationApp.executor": "Run",
+    "Application.EmergencyCoordinationCLI.executor": "Run",
     "Application.Run EmergencyCoordinationApp.executor": "Run",
     "Application.Run Server.executor": "Run",
     "Application.Server.executor": "Run",
@@ -79,7 +95,20 @@
       <recent name="C:\Users\xavie\IdeaProjects\ac_8200690_8200330\dependencies\javafx" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Run Server">
+  <component name="RunManager" selected="Application.EmergencyCoordinationCLI">
+    <configuration name="EmergencyCoordinationCLI" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="application.EmergencyCoordinationCLI" />
+      <module name="ac_8200690_8200330" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="application.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Run Server" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="server.Server" />
       <module name="ac_8200690_8200330" />
@@ -102,10 +131,12 @@
     </configuration>
     <list>
       <item itemvalue="Application.Run Server" />
+      <item itemvalue="Application.EmergencyCoordinationCLI" />
       <item itemvalue="Application.Server" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.EmergencyCoordinationCLI" />
         <item itemvalue="Application.Server" />
       </list>
     </recent_temporary>

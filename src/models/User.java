@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;
-    private AtomicInteger counter = new AtomicInteger(0)
+    private AtomicInteger counter = new AtomicInteger(0);
     private String id;
     private String name;
     private String username;

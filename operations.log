@@ -43,3 +43,13 @@
 [2024-11-12 16:01:54] User admin_id: LOGIN - User logged in
 [2024-11-18 10:16:16] SYSTEM: Server started on port 8080
 [2024-11-18 10:16:38] User admin_id: LOGIN - User logged in
+[2024-11-23 18:15:28] SYSTEM: Server started on port 8080
+[2024-11-23 18:16:08] User Admin1: LOGIN - User logged in
+[2024-11-23 18:16:25] User Admin1: LOGIN - User logged in
+[2024-11-23 18:18:32] User Admin1: LOGIN - User logged in
+[2024-11-23 18:37:27] User Admin1: LOGIN - User logged in
+[2024-11-23 18:46:54] User Admin1: LOGIN - User logged in
+[2024-11-23 18:47:45] User Admin1: LOGIN - User logged in
+[2024-11-23 18:49:31] User Admin1: LOGIN - User logged in
+[2024-11-23 18:49:35] User Admin1: GET_NOTIFICATIONS - Retrieved 0 notifications
+[2024-11-23 18:55:20] User Admin1: LOGIN - User logged in
