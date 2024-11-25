@@ -88,7 +88,7 @@ public class ProtocolHandler {
         return request;
     }
 
-    public static Request createLeaveChannelRequest(String channelId) {
+    public Request createLeaveChannelRequest(String channelId) {
         Request request = new Request(RequestType.LEAVE_CHANNEL);
         request.addData("channelId", channelId);
         return request;
@@ -98,7 +98,7 @@ public class ProtocolHandler {
         return new Request(RequestType.CHANNEL_LIST);
     }
 
-    public static Request createUserListRequest() {
+    public Request createUserListRequest() {
         return new Request(RequestType.USER_LIST);
     }
 

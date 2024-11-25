@@ -1,5 +1,6 @@
 package server;
 
+import enums.UserRole;
 import models.Message;
 import models.Notification;
 import models.Operation;
@@ -15,24 +16,20 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
+import java.util.Objects;
 
 public class ClientHandler implements Runnable {
     private Socket clientSocket;
     private ObjectInputStream in;
     private ObjectOutputStream out;
-    private AuthenticationManager authManager;
     private HierarchyManager hierarchyManager;
-    private DatabaseManager dbManager;
     private OperationLogger logger;
     private User currentUser;
     private boolean isRunning;
 
-    public ClientHandler(Socket socket, AuthenticationManager authManager, HierarchyManager hierarchyManager,
-                         DatabaseManager dbManager, OperationLogger logger) {
+    public ClientHandler(Socket socket, HierarchyManager hierarchyManager, OperationLogger logger) {
         this.clientSocket = socket;
-        this.authManager = authManager;
         this.hierarchyManager = hierarchyManager;
-        this.dbManager = dbManager;
         this.logger = logger;
         this.isRunning = true;
     }
@@ -50,12 +47,14 @@ public class ClientHandler implements Runnable {
             }
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Error handling client: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         } finally {
             closeConnection();
         }
     }
 
-    private void handleRequest(Request request) throws IOException {
+    private void handleRequest(Request request) throws Exception {
         switch (request.getType()) {
             case LOGIN:
                 handleLogin(request);
@@ -81,7 +80,9 @@ public class ClientHandler implements Runnable {
             case GET_MESSAGES:
                 handleGetMessages();
                 break;
-
+            case REGISTER_USER:
+                handleRegisterUser(request);
+                break;
             default:
                 sendResponse(ProtocolHandler.createErrorResponse("Unknown request type"));
         }
@@ -90,9 +91,9 @@ public class ClientHandler implements Runnable {
     private void handleLogin(Request request) throws IOException {
         String username = (String) request.getData("username");
         String password = (String) request.getData("password");
-        User user = authManager.authenticateUser(username, password);
+        User user = AuthenticationManager.authenticateUser(username, password);
         if (user != null) {
-            currentUser = authManager.getUserByUsername(username);
+            currentUser = AuthenticationManager.getUserByUsername(username);
             sendResponse(ProtocolHandler.createSuccessResponse("Login successful", user));
             logger.logAction(currentUser.getId(), "LOGIN", "User logged in");
         } else {
@@ -102,7 +103,7 @@ public class ClientHandler implements Runnable {
 
     private void handleGetMessages() throws IOException {
         User currentUser = getCurrentUser();
-        List<Message> messages = dbManager.getMessagesForUser(currentUser.getId());
+        List<Message> messages = DatabaseManager.getMessagesForUser(currentUser.getId());
         Response response = new Response(true, "Messages retrieved successfully", messages);
         out.writeObject(response);
         out.flush();
@@ -118,12 +119,12 @@ public class ClientHandler implements Runnable {
             sendResponse(response);
         } else {
             try {
-                List<Notification> notifications = dbManager.getNotificationsForUser(currentUser.getId()); //error: Cannot resolve method 'getNotificationsForUser' in 'DatabaseManager'
+                List<Notification> notifications = DatabaseManager.getNotificationsForUser(currentUser.getId()); //error: Cannot resolve method 'getNotificationsForUser' in 'DatabaseManager'
 
                 // Mark retrieved notifications as read
                 for (Notification notification : notifications) {
                     notification.setRead(true);
-                    dbManager.updateNotification(notification); //error: Cannot resolve method 'updateNotification' in 'DatabaseManager'
+                    DatabaseManager.updateNotification(notification); //error: Cannot resolve method 'updateNotification' in 'DatabaseManager'
                 }
 
                 ProtocolHandler.Response response = ProtocolHandler.createSuccessResponse("Notifications retrieved", notifications);
@@ -141,7 +142,7 @@ public class ClientHandler implements Runnable {
 
     private void handleLogout() throws IOException {
         if (currentUser != null) {
-            authManager.logoutUser(currentUser.getId());
+            AuthenticationManager.logoutUser(currentUser.getId());
             logger.logAction(currentUser.getId(), "LOGOUT", "User logged out");
             currentUser = null;
             sendResponse(ProtocolHandler.createSuccessResponse("Logout successful", null));
@@ -150,13 +151,27 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    private void handleRegisterUser(Request request) throws Exception {
+        //Checks client
+        if (currentUser == null) throw new Exception("Current user is null.");
+        //Checks request
+        if(request == null) throw new Exception("Request to register user isn't valid (null)");
+        //Checks request type
+        if(!request.getType().equals(ProtocolHandler.RequestType.REGISTER_USER)) throw new Exception("Wrong request type: " + request.getType() + "\n Expected type: REGISTER_USER");
+
+        User userToRegister = new User((String) request.getData("name"), (String) request.getData("password"), (UserRole) request.getData("role"));
+        //if the user doesn't exist then registers it.
+        if(!DatabaseManager.userExists(userToRegister.getUsername()))
+            DatabaseManager.saveUser(Objects.requireNonNull(AuthenticationManager.registerUser(userToRegister.getName(), userToRegister.getUsername(), userToRegister.getPassword(), userToRegister.getRole())));
+    }
+
     private void handleSendMessage(Request request) throws IOException {
         if (currentUser == null) {
             sendResponse(ProtocolHandler.createErrorResponse("Not authenticated"));
             return;
         }
         Message message = (Message) request.getData("message");
-        dbManager.saveMessage(message);
+        DatabaseManager.saveMessage(message);
         logger.logAction(currentUser.getId(), "SEND_MESSAGE", "Message sent to " + message.getRecipientId());
         sendResponse(ProtocolHandler.createSuccessResponse("Message sent", null));
     }
@@ -168,7 +183,7 @@ public class ClientHandler implements Runnable {
         }
 
         String channelId = (String) request.getData("channelId");
-        boolean joined = dbManager.addUserToChannel(currentUser.getId(), channelId);
+        boolean joined = DatabaseManager.addUserToChannel(currentUser.getId(), channelId);
 
         if (joined) {
             logger.logAction(currentUser.getId(), "JOIN_CHANNEL", "Joined channel " + channelId);

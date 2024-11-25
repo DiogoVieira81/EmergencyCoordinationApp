@@ -12,19 +12,17 @@ import java.util.Map;
 import java.util.UUID;
 
 public class AuthenticationManager {
-    private Map<String, User> users;
-    private Map<String, String> sessions;
-    private DatabaseManager dbManager;
+    private static Map<String, User> users;
+    private static Map<String, String> sessions;
 
-    public AuthenticationManager(DatabaseManager dbManager) {
-        this.dbManager = dbManager;
+    public AuthenticationManager() {
         this.users = new HashMap<>();
         loadUsersFromDatabase();
 
     }
 
     private void loadUsersFromDatabase() {
-        List<User> userList = dbManager.getUsers();
+        List<User> userList = DatabaseManager.getUsers();
         if (userList != null) {
             for (User user : userList) {
                 users.put(user.getUsername(), user);
@@ -35,7 +33,7 @@ public class AuthenticationManager {
         }
     }
 
-    public User registerUser(String name, String username, String password, UserRole role) {
+    public static User registerUser(String name, String username, String password, UserRole role) {
         if (users.containsKey(username)) {
             return null; // User already exists
         }
@@ -47,8 +45,8 @@ public class AuthenticationManager {
         return newUser;
     }
 
-    public User authenticateUser(String username, String password) {
-        User user = dbManager.getUserByUsername(username);
+    public static User authenticateUser(String username, String password) {
+        User user = DatabaseManager.getUserByUsername(username);
         String hashedPassword = hashPassword(password);
         if (user != null && user.authenticate(hashedPassword)) {
             return user;
@@ -56,7 +54,7 @@ public class AuthenticationManager {
         return null;
     }
 
-    public void logoutUser(String sessionToken) {
+    public static void logoutUser(String sessionToken) {
         String userId = sessions.remove(sessionToken);
         if (userId != null) {
             users.values().stream()
@@ -66,7 +64,7 @@ public class AuthenticationManager {
         }
     }
 
-    private String hashPassword(String password) {
+    private static String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] hashedBytes = md.digest(password.getBytes());
@@ -80,7 +78,7 @@ public class AuthenticationManager {
         }
     }
 
-    public User getUserByUsername(String username) {
-        return dbManager.getUserByUsername(username);
+    public static User getUserByUsername(String username) {
+        return DatabaseManager.getUserByUsername(username);
     }
 }

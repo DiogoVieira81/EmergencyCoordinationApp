@@ -296,10 +296,8 @@ public class Client {
         }
 
         try {
-            ProtocolHandler.Request request = new ProtocolHandler.createRegisterUserRequest()//TODO CRIAR REGISTO DE UTILIZADOR NA BD.
-                                                        //TODO REQUEST TEM DE ENVIAR O UTILIZADOR PARA O SERVIDOR VERIFICAR SE ELE JÁ EXISTE NA BD
-                                            //TODO O SERVIDOR DEVOLVE UMA RESPOSTA POSITIVA OU NEGATIVA E ASSIM O REGISTO É FEITO OU NÃO
-
+            User userToRegister = new User(name, password, userRole);
+            ProtocolHandler.Request request = ProtocolHandler.createRegisterUserRequest(userToRegister);
 
             out.writeObject(request);
             out.flush();
@@ -309,8 +307,6 @@ public class Client {
             if (response.isSuccess()) {
                 User user = (User) response.getData();
                 System.out.println("Nome: " + user.getName());
-                DatabaseManager.saveUser(user);
-                System.out.println("Registo de usuário bem-sucedido!");
             } else {
                 System.out.println("Falha no registo: " + response.getMessage());
             }

@@ -139,7 +139,7 @@ public class DatabaseManager {
         Document doc = new Document("_id", user.getId())
                 .append("name", user.getName())
                 .append("username", user.getUsername())
-                .append("password", user.getPassword())
+                .append("password", hashPassword(user.getPassword()))
                 .append("role", user.getRole().toString());
         collection.insertOne(doc);
     }

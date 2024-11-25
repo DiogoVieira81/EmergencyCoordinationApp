@@ -7,28 +7,14 @@
     <list default="true" id="069c91f5-17fb-43ce-95ab-2d784f969fb2" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/operations.log" beforeDir="false" afterPath="$PROJECT_DIR$/operations.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/EmergencyCoordinationApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/EmergencyCoordinationCLI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/EmergencyCoordinationCLI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/EmergencyCoordinationCLI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controllers/ChannelsController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controllers/DashboardController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controllers/LoginController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controllers/MessagesController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controllers/NotificationsController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controllers/OperationsController.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/models/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resources/fxml/ChannelsView.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resources/fxml/DashboardView.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resources/fxml/LoginView.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resources/fxml/MessageListView.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resources/fxml/MessagesView.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resources/fxml/NotificationsView.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/resources/fxml/OperationsView.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/ClientHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/ClientHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/server/DatabaseManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/DatabaseManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/UserInterface.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/Server.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/AuthenticationManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/AuthenticationManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utils/ProtocolHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/ProtocolHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/ChannelListView.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/CreateChannelView.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,27 +52,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
-    "Application.EmergencyCoordinationApp.executor": "Run",
-    "Application.EmergencyCoordinationCLI.executor": "Run",
-    "Application.Run EmergencyCoordinationApp.executor": "Run",
-    "Application.Run Server.executor": "Run",
-    "Application.Server.executor": "Run",
-    "JAR Application.bson-5.3.0-beta0.jar.executor": "Run",
-    "JAR Application.javafx.base.jar (1).executor": "Run",
-    "JAR Application.javafx.base.jar.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "Diogo",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/xavie/IdeaProjects/ac_8200690_8200330/dependencies/mongo-java-driver-3.12.14.jar",
-    "project.structure.last.edited": "Libraries",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.externalResources"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
+    &quot;Application.EmergencyCoordinationApp.executor&quot;: &quot;Run&quot;,
+    &quot;Application.EmergencyCoordinationCLI.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Run EmergencyCoordinationApp.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Run Server.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Server.executor&quot;: &quot;Run&quot;,
+    &quot;JAR Application.bson-5.3.0-beta0.jar.executor&quot;: &quot;Run&quot;,
+    &quot;JAR Application.javafx.base.jar (1).executor&quot;: &quot;Run&quot;,
+    &quot;JAR Application.javafx.base.jar.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Diogo&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/xavie/IdeaProjects/ac_8200690_8200330/dependencies/mongo-java-driver-3.12.14.jar&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.externalResources&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\xavie\IdeaProjects\ac_8200690_8200330\dependencies" />

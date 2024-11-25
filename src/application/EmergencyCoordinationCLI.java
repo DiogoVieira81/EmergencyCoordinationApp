@@ -63,7 +63,6 @@ public class EmergencyCoordinationCLI {
         try {
             UserRole userRole = UserRole.valueOf(role);
             client.registerUser(name, password, userRole);
-            System.out.println("Registo concluído com sucesso!");
         } catch (IllegalArgumentException | IOException e) {
             System.out.println("Falha no registo: " + e.getMessage());
         }

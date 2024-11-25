@@ -17,16 +17,14 @@ public class Server {
     private final ExecutorService threadPool;
     private final AuthenticationManager authManager;
     private final HierarchyManager hierarchyManager;
-    private final DatabaseManager dbManager;
     private final OperationLogger logger;
     private volatile boolean isRunning;
 
     public Server() {
         this.threadPool = Executors.newFixedThreadPool(MAX_CLIENTS);
         this.hierarchyManager = new HierarchyManager();
-        this.dbManager = new DatabaseManager();
-        this.dbManager.initializeDatabase();
-        this.authManager = new AuthenticationManager(this.dbManager);
+        DatabaseManager.initializeDatabase();
+        this.authManager = new AuthenticationManager();
         this.logger = new OperationLogger();
         this.isRunning = false;
     }
@@ -41,7 +39,7 @@ public class Server {
             while (isRunning) {
                 try {
                     Socket clientSocket = serverSocket.accept();
-                    ClientHandler clientHandler = new ClientHandler(clientSocket, authManager, hierarchyManager, dbManager, logger);
+                    ClientHandler clientHandler = new ClientHandler(clientSocket, hierarchyManager, logger);
                     threadPool.execute(clientHandler);
                 } catch (IOException e) {
                     if (isRunning) {
@@ -74,7 +72,7 @@ public class Server {
 
     private void shutdown() {
         threadPool.shutdownNow();
-        dbManager.close();
+        DatabaseManager.close();
         logger.shutdown();
     }
 
