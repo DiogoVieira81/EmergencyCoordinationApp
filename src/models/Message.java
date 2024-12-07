@@ -13,6 +13,9 @@ public class Message {
     private boolean isRead;
     private MessageType type;
 
+    public Message(String id, String content) {
+    }
+
     public enum MessageType {
         DIRECT, CHANNEL, NOTIFICATION, ALERT
     }

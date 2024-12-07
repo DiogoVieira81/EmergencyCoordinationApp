@@ -25,6 +25,17 @@ public class User implements Serializable {
         this.isOnline = false;
     }
 
+    // Novo construtor
+    public User(String name, String username, String password, UserRole role) {
+        this.name = name;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.id = name + counter.incrementAndGet(); // Gera um ID único
+        this.isOnline = false;
+    }
+
+
     // Getters and setters
     public String getId() {
         return id;

@@ -5,16 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="069c91f5-17fb-43ce-95ab-2d784f969fb2" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/operations.log" beforeDir="false" afterPath="$PROJECT_DIR$/operations.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/EmergencyCoordinationCLI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/EmergencyCoordinationCLI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/models/Message.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/Message.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/models/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server/ClientHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/ClientHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server/DatabaseManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/DatabaseManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/Server.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utils/AuthenticationManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/AuthenticationManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/ProtocolHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/ProtocolHandler.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,7 +77,7 @@
       <recent name="C:\Users\xavie\IdeaProjects\ac_8200690_8200330\dependencies\javafx" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.EmergencyCoordinationCLI">
+  <component name="RunManager" selected="Application.Server">
     <configuration name="EmergencyCoordinationCLI" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="application.EmergencyCoordinationCLI" />
       <module name="ac_8200690_8200330" />
@@ -122,8 +118,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.EmergencyCoordinationCLI" />
         <item itemvalue="Application.Server" />
+        <item itemvalue="Application.EmergencyCoordinationCLI" />
       </list>
     </recent_temporary>
   </component>

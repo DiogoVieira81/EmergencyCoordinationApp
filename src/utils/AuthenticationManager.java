@@ -78,6 +78,7 @@ public class AuthenticationManager {
         }
     }
 
+
     public static User getUserByUsername(String username) {
         return DatabaseManager.getUserByUsername(username);
     }

@@ -1,234 +1,211 @@
 package application;
 
-import client.Client;
-import enums.OperationType;
 import enums.UserRole;
-import models.Channel;
 import models.Message;
-import models.Notification;
+import models.User;
+import utils.ProtocolHandler;
+import utils.ProtocolHandler.Request;
+import utils.ProtocolHandler.Response;
 
-import java.io.IOException;
-import java.util.List;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.Scanner;
 
 public class EmergencyCoordinationCLI {
-    private Client client;
-    private Scanner scanner;
-    private boolean isRunning;
+    private static final String SERVER_HOST = "localhost";
+    private static final int SERVER_PORT = 8080;
 
-    public EmergencyCoordinationCLI(Client client) {
-        this.client = client;
-        this.scanner = new Scanner(System.in);
-        this.isRunning = true;
+    private Socket socket;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
+    private User currentUser;
+
+    public EmergencyCoordinationCLI() {
+        try {
+            socket = new Socket(SERVER_HOST, SERVER_PORT);
+            out = new ObjectOutputStream(socket.getOutputStream());
+            in = new ObjectInputStream(socket.getInputStream());
+        } catch (Exception e) {
+            System.err.println("Error connecting to the server: " + e.getMessage());
+            System.exit(1);
+        }
     }
 
-    public void run() {
-        System.out.println("==== Sistema de Coordenação de Emergência ====");
-        while (isRunning) {
-            if (client.getCurrentUser() == null) {
-                showLoginMenu();
-            } else {
-                showMainMenu();
+    public void start() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("=== Welcome to the Server System ===");
+        while (true) {
+            printMainMenu();
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume the newline character
+
+            switch (choice) {
+                case 1 -> handleLogin(scanner);
+                case 2 -> handleRegister(scanner);
+                case 3 -> handleSendMessage(scanner);
+                case 4 -> handleCreateChannel(scanner);
+                case 5 -> handleGetNotifications();
+                case 6 -> handleLogout();
+                case 0 -> exit();
+                default -> System.out.println("Invalid option. Please try again.");
             }
         }
     }
 
-    private void showLoginMenu() {
-        System.out.println("\n1. Login");
-        System.out.println("0. Sair");
-        System.out.print("Escolha uma opção: ");
-        String choice = scanner.nextLine();
+    private void printMainMenu() {
+        System.out.println("\nMain Menu:");
+        System.out.println("1. Login");
+        System.out.println("2. Register");
+        System.out.println("3. Send Message");
+        System.out.println("4. Create Channel");
+        System.out.println("5. Get Notifications");
+        System.out.println("6. Logout");
+        System.out.println("0. Exit");
+        System.out.print("Enter your choice: ");
+    }
 
-        switch (choice) {
-            case "1":
-                login();
-                break;
-            case "0":
-                System.exit(0);
-                break;
-            default:
-                System.out.println("Opção inválida.");
+    private void handleLogin(Scanner scanner) {
+        System.out.print("Username: ");
+        String username = scanner.nextLine();
+        System.out.print("Password: ");
+        String password = scanner.nextLine();
+
+        Request loginRequest = ProtocolHandler.createLoginRequest(username, password);
+        Response response = sendRequest(loginRequest);
+
+        if (response.isSuccess()) {
+            currentUser = (User) response.getData();
+            System.out.println("Login successful! Welcome, " + currentUser.getName());
+        } else {
+            System.out.println("Login failed: " + response.getMessage());
         }
     }
 
-    private void register() {
-        System.out.println("\n== Registo de Novo Utilizador ==");
-        System.out.print("Nome: ");
+    private void handleRegister(Scanner scanner) {
+        System.out.print("Name: ");
         String name = scanner.nextLine();
-        System.out.print("Senha: ");
+        System.out.print("Username: ");
+        String username = scanner.nextLine();
+        System.out.print("Password: ");
         String password = scanner.nextLine();
-        System.out.print("Perfil (LOW_LEVEL, MID_LEVEL, HIGH_LEVEL, ADMIN): ");
+        System.out.print("Role (ADMIN/USER): ");
         String role = scanner.nextLine().toUpperCase();
 
-        try {
-            UserRole userRole = UserRole.valueOf(role);
-            client.registerUser(name, password, userRole);
-        } catch (IllegalArgumentException | IOException e) {
-            System.out.println("Falha no registo: " + e.getMessage());
+        User newUser = new User(name, username, password, UserRole.valueOf(role));
+        Request registerRequest = ProtocolHandler.createRegisterUserRequest(newUser);
+        Response response = sendRequest(registerRequest);
+
+        if (response.isSuccess()) {
+            System.out.println("Registration successful!");
+        } else {
+            System.out.println("Registration failed: " + response.getMessage());
         }
     }
 
-    private void login() {
-        try {
-            System.out.println("\n== Login ==");
-            System.out.print("Nome de utilizador: ");
-            String username = scanner.nextLine();
-            System.out.print("Senha: ");
-            String password = scanner.nextLine();
-
-
-            if (client.login(username, password)) {
-                System.out.println("Login bem-sucedido!");
-            } else {
-                System.out.println("Falha no login.");
-            }
-        } catch (IOException e) {
-            System.out.println("Erro ao conectar: " + e.getMessage());
+    private void handleSendMessage(Scanner scanner) {
+        if (currentUser == null) {
+            System.out.println("Please login first.");
+            return;
         }
-    }
 
-    private void showMainMenu() {
-        System.out.println("\n== Menu Principal ==");
-        if (client.getCurrentUser().getRole() == UserRole.ADMIN) {
-            System.out.println("1. Registar Novo Utilizador");
-        }
-        System.out.println("2. Enviar Mensagem");
-        System.out.println("3. Criar Canal");
-        System.out.println("4. Entrar em Canal");
-        System.out.println("5. Listar Canais");
-        System.out.println("6. Iniciar Operação");
-        System.out.println("7. Aprovar Operação");
-        System.out.println("8. Ver Notificações");
-        System.out.println("9. Logout");
-        System.out.print("Escolha uma opção: ");
-        String choice = scanner.nextLine();
-
-        try {
-            int offset = client.getCurrentUser().getRole() == UserRole.ADMIN ? 0 : 1;
-            switch (Integer.parseInt(choice) + offset) {
-                case 1:
-                    register();
-                    break;
-                case 2:
-                    sendMessage();
-                    break;
-                case 3:
-                    createChannel();
-                    break;
-                case 4:
-                    joinChannel();
-                    break;
-                case 5:
-                    listChannels();
-                    break;
-                case 6:
-                    initiateOperation();
-                    break;
-                case 7:
-                    approveOperation();
-                    break;
-                case 8:
-                    viewNotifications();
-                    break;
-                case 9:
-                    logout();
-                    break;
-                default:
-                    System.out.println("Opção inválida.");
-            }
-        } catch (IOException | NumberFormatException | ClassNotFoundException e) {
-            System.out.println("Erro: " + e.getMessage());
-        }
-    }
-
-
-    private void sendMessage() throws IOException {
-        System.out.print("Destinatário (usuário ou canal): ");
-        String recipient = scanner.nextLine();
-        System.out.print("Mensagem: ");
+        System.out.print("Message content: ");
         String content = scanner.nextLine();
 
-        Message message = new Message(client.getCurrentUser().getId(), recipient, null, content, Message.MessageType.DIRECT);
-        client.sendMessage(message);
-        System.out.println("Mensagem enviada com sucesso!");
-    }
+        Message message = new Message(currentUser.getId(), content);
+        Request sendMessageRequest = ProtocolHandler.createSendMessageRequest(message);
+        Response response = sendRequest(sendMessageRequest);
 
-    private void createChannel() throws IOException {
-        System.out.print("Nome do Canal: ");
-        String name = scanner.nextLine();
-        System.out.print("Descrição do Canal: ");
-        String description = scanner.nextLine();
-        System.out.print("É um canal de emergência? (s/n): ");
-        boolean isEmergency = scanner.nextLine().equalsIgnoreCase("s");
-
-        if (client.createChannel(name, description, client.getCurrentUser(), isEmergency)) {
-            System.out.println("Canal criado com sucesso!");
+        if (response.isSuccess()) {
+            System.out.println("Message sent!");
         } else {
-            System.out.println("Falha ao criar o canal.");
+            System.out.println("Failed to send message: " + response.getMessage());
         }
     }
 
-    private void joinChannel() throws IOException {
-        System.out.print("ID do Canal: ");
-        String channelId = scanner.nextLine();
-
-        client.joinChannel(channelId);
-        System.out.println("Entrou no canal com sucesso!");
-    }
-
-    private void listChannels() throws IOException {
-        List<Channel> channels = client.requestChannelList();
-        System.out.println("=== Lista de Canais ===");
-        for (Channel channel : channels) {
-            System.out.println(channel.getId() + ": " + channel.getName() + " - Emergência: " + (channel.isEmergencyChannel() ? "Sim" : "Não"));
+    private void handleCreateChannel(Scanner scanner) {
+        if (currentUser == null) {
+            System.out.println("Please login first.");
+            return;
         }
-    }
 
-    private void initiateOperation() throws IOException {
-        System.out.println("\n== Iniciar Nova Operação ==");
-        System.out.print("Nome da Operação: ");
+        System.out.print("Channel name: ");
         String name = scanner.nextLine();
-        System.out.print("Descrição: ");
+        System.out.print("Description: ");
         String description = scanner.nextLine();
-        System.out.print("Tipo (mass_evacuation, emergency_communications_activation, emergency_resources_distribution): ");
-        String typeInput = scanner.nextLine();
+        System.out.print("Is this an emergency channel? (true/false): ");
+        boolean isEmergency = scanner.nextBoolean();
 
+        Request createChannelRequest = ProtocolHandler.createCreateChannelRequest(
+                name, description, currentUser, isEmergency);
+        Response response = sendRequest(createChannelRequest);
+
+        if (response.isSuccess()) {
+            System.out.println("Channel created successfully!");
+        } else {
+            System.out.println("Failed to create channel: " + response.getMessage());
+        }
+    }
+
+    private void handleGetNotifications() {
+        if (currentUser == null) {
+            System.out.println("Please login first.");
+            return;
+        }
+
+        Request notificationRequest = ProtocolHandler.createNotificationRequest();
+        Response response = sendRequest(notificationRequest);
+
+        if (response.isSuccess()) {
+            System.out.println("Notifications: " + response.getData());
+        } else {
+            System.out.println("Failed to fetch notifications: " + response.getMessage());
+        }
+    }
+
+    private void handleLogout() {
+        if (currentUser == null) {
+            System.out.println("You are not logged in.");
+            return;
+        }
+
+        Request logoutRequest = ProtocolHandler.createLogoutRequest();
+        Response response = sendRequest(logoutRequest);
+
+        if (response.isSuccess()) {
+            currentUser = null;
+            System.out.println("Logged out successfully.");
+        } else {
+            System.out.println("Logout failed: " + response.getMessage());
+        }
+    }
+
+    private Response sendRequest(Request request) {
         try {
-            OperationType type = OperationType.valueOf(typeInput);
-            client.initiateOperation(name, description, type);
-            System.out.println("Operação iniciada com sucesso!");
-        } catch (IllegalArgumentException e) {
-            System.out.println("Tipo de operação inválido.");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            out.writeObject(request);
+            out.flush();
+            return (Response) in.readObject();
+        } catch (Exception e) {
+            System.err.println("Error communicating with server: " + e.getMessage());
+            return ProtocolHandler.createErrorResponse("Communication error");
         }
     }
 
-    private void approveOperation() throws IOException {
-        System.out.println("\n== Aprovar Operação ==");
-        System.out.print("ID da Operação: ");
-        String operationId = scanner.nextLine();
-
-        client.approveOperation(operationId);
-        System.out.println("Operação aprovada com sucesso!");
-    }
-
-    private void viewNotifications() throws IOException, ClassNotFoundException {
-        List<Notification> notifications = client.getNotifications();
-        System.out.println("=== Notificações ===");
-        for (Notification notification : notifications) {
-            System.out.println(notification.getId() + ": " + notification.getTitle() + " - " + notification.getContent());
+    private void exit() {
+        System.out.println("Exiting...");
+        try {
+            if (socket != null) {
+                socket.close();
+            }
+        } catch (Exception e) {
+            System.err.println("Error closing socket: " + e.getMessage());
         }
-    }
-
-    private void logout() throws IOException, ClassNotFoundException {
-        client.logout();
-        System.out.println("Logout realizado com sucesso.");
+        System.exit(0);
     }
 
     public static void main(String[] args) {
-        Client client = new Client("localhost", 8080);
-        EmergencyCoordinationCLI cli = new EmergencyCoordinationCLI(client);
-        cli.run();
+        EmergencyCoordinationCLI ui = new EmergencyCoordinationCLI();
+        ui.start();
     }
 }
