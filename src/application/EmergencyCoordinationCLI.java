@@ -37,27 +37,46 @@ public class EmergencyCoordinationCLI {
 
         System.out.println("=== Welcome to the Server System ===");
         while (true) {
-            printMainMenu();
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume the newline character
+            if (currentUser == null) {
+                printInitialMenu();
+                int choice = scanner.nextInt();
+                scanner.nextLine(); // Consumir nova linha
 
-            switch (choice) {
-                case 1 -> handleLogin(scanner);
-                case 2 -> handleRegister(scanner);
-                case 3 -> handleSendMessage(scanner);
-                case 4 -> handleCreateChannel(scanner);
-                case 5 -> handleGetNotifications();
-                case 6 -> handleLogout();
-                case 0 -> exit();
-                default -> System.out.println("Invalid option. Please try again.");
+                switch (choice) {
+                    case 1 -> handleLogin(scanner);
+                    case 0 -> exit();
+                    default -> System.out.println("Invalid option. Please try again.");
+                }
+            } else {
+                printMainMenu();
+                int choice = scanner.nextInt();
+                scanner.nextLine(); // Consumir nova linha
+
+                switch (choice) {
+                    case 2 -> handleRegister(scanner); // Apenas ADMIN
+                    case 3 -> handleSendMessage(scanner);
+                    case 4 -> handleCreateChannel(scanner);
+                    case 5 -> handleGetNotifications();
+                    case 6 -> handleLogout();
+                    case 0 -> exit();
+                    default -> System.out.println("Invalid option. Please try again.");
+                }
             }
         }
     }
 
+
+
+    private void printInitialMenu() {
+        System.out.println("\nInitial Menu:");
+        System.out.println("1. Login");
+        System.out.println("0. Exit");
+        System.out.print("Enter your choice: ");
+    }
+
     private void printMainMenu() {
         System.out.println("\nMain Menu:");
-        System.out.println("1. Login");
-        System.out.println("2. Register");
+        System.out.println("2. Register User (Admin Only)");
         System.out.println("3. Send Message");
         System.out.println("4. Create Channel");
         System.out.println("5. Get Notifications");
@@ -84,23 +103,34 @@ public class EmergencyCoordinationCLI {
     }
 
     private void handleRegister(Scanner scanner) {
+        if (currentUser == null || currentUser.getRole() != UserRole.ADMIN) {
+            System.out.println("You do not have permission to register new users.");
+            return;
+        }
+
         System.out.print("Name: ");
         String name = scanner.nextLine();
         System.out.print("Username: ");
         String username = scanner.nextLine();
         System.out.print("Password: ");
         String password = scanner.nextLine();
-        System.out.print("Role (ADMIN/USER): ");
-        String role = scanner.nextLine().toUpperCase();
+        System.out.print("Role (LOW_LEVEL, MID_LEVEL, HIGH_LEVEL, ADMIN): ");
+        String roleInput = scanner.nextLine().toUpperCase();
 
-        User newUser = new User(name, username, password, UserRole.valueOf(role));
-        Request registerRequest = ProtocolHandler.createRegisterUserRequest(newUser);
-        Response response = sendRequest(registerRequest);
+        try {
+            UserRole role = UserRole.valueOf(roleInput);
 
-        if (response.isSuccess()) {
-            System.out.println("Registration successful!");
-        } else {
-            System.out.println("Registration failed: " + response.getMessage());
+            Request registerRequest = ProtocolHandler.createRegisterUserRequest(
+                    new User(name, username, password, role));
+            Response response = sendRequest(registerRequest);
+
+            if (response.isSuccess()) {
+                System.out.println("User registered successfully!");
+            } else {
+                System.out.println("Registration failed: " + response.getMessage());
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid role. Please try again.");
         }
     }
 
