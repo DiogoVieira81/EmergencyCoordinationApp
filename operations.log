@@ -79,3 +79,23 @@
 [2024-12-07 17:19:32] User Admin1: LOGIN - User logged in
 [2024-12-07 17:21:24] SYSTEM: Server started on port 8080
 [2024-12-07 17:21:41] User Admin1: LOGIN - User logged in
+[2024-12-10 19:40:47] SYSTEM: Server started on port 8080
+[2024-12-10 19:41:20] User Admin1: LOGIN - User logged in
+[2024-12-10 19:45:21] User Admin1: LOGIN - User logged in
+[2024-12-10 20:05:41] SYSTEM: Server started on port 8080
+[2024-12-10 20:14:48] User Admin1: LOGIN - User logged in
+[2024-12-10 20:14:59] User Admin1: LOGOUT - User logged out
+[2024-12-10 20:15:15] User Admin1: LOGIN - User logged in
+[2024-12-10 20:17:39] User Admin1: LOGIN - User logged in
+[2024-12-10 20:20:45] SYSTEM: Server started on port 8080
+[2024-12-10 20:21:05] User Admin1: LOGIN - User logged in
+[2024-12-10 20:26:16] User Admin1: LOGIN - User logged in
+[2024-12-10 20:26:50] User Admin1: SEND_MESSAGE - Message sent to admin_id
+[2024-12-10 20:29:18] User Admin1: LOGIN - User logged in
+[2024-12-10 20:29:20] User Admin1: GET_MESSAGES - Retrieved 0 messages
+[2024-12-11 13:02:43] SYSTEM: Server started on port 8080
+[2024-12-11 13:03:31] User Admin1: LOGIN - User logged in
+[2024-12-11 13:04:21] User Admin1: LOGOUT - User logged out
+[2024-12-11 14:00:13] SYSTEM: Server started on port 8080
+[2024-12-11 14:01:16] User Admin1: LOGIN - User logged in
+[2024-12-11 14:01:32] User Admin1: SEND_MESSAGE - Message sent to ttt

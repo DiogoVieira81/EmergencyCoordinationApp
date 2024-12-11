@@ -17,6 +17,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
 import java.util.Objects;
+import java.util.Scanner;
 
 public class ClientHandler implements Runnable {
     private Socket clientSocket;
@@ -32,6 +33,10 @@ public class ClientHandler implements Runnable {
         this.hierarchyManager = hierarchyManager;
         this.logger = logger;
         this.isRunning = true;
+    }
+
+    public ClientHandler() {
+
     }
 
     @Override
@@ -88,16 +93,20 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void handleLogin(Request request) throws IOException {
-        String username = (String) request.getData("username");
-        String password = (String) request.getData("password");
+    private void handleLogin(Request request) {
+        System.out.print("Username: ");
+        Scanner scanner = null;
+        String username = scanner.nextLine();
+        System.out.print("Password: ");
+        String password = scanner.nextLine();
+
         User user = AuthenticationManager.authenticateUser(username, password);
         if (user != null) {
             currentUser = AuthenticationManager.getUserByUsername(username);
-            sendResponse(ProtocolHandler.createSuccessResponse("Login successful", user));
+            System.out.println("Login successful!");
             logger.logAction(currentUser.getId(), "LOGIN", "User logged in");
         } else {
-            sendResponse(ProtocolHandler.createErrorResponse("Invalid credentials"));
+            System.out.println("Invalid credentials. Please try again.");
         }
     }
 
