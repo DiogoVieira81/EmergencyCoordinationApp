@@ -18,8 +18,7 @@ public class Channel {
     private boolean isEmergencyChannel;
 
     public Channel(String name, String description, String creatorId, boolean isEmergencyChannel) {
-        this.counter.incrementAndGet();
-        this.id.concat(this.counter.toString());
+        this.id = "CHANNEL_" + counter.getAndIncrement();
         this.name = name;
         this.description = description;
         this.creationTime = LocalDateTime.now();
