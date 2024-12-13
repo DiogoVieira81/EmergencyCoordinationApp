@@ -79,11 +79,25 @@ public class EmergencyCoordinationCLI {
         User user = DatabaseManager.getUser(username);
         if (user != null && user.getPassword().equals(DatabaseManager.hashPassword(password))) {
             isAuthenticated = true; // Autenticado com sucesso
+            loggedInUser = user;  // Atribuindo o usuário logado
             System.out.println("Login successful. Welcome, " + user.getName() + "!");
+            System.out.println("Your role is: " + user.getRole());  // Verificar o role do usuário
+
+            // Verificar o role do usuário
+            if (user.getRole() == UserRole.ADMIN) {  // Comparação direta com o enum
+                System.out.println("You have administrative permissions.");
+                // Permitir criação de canais e usuários
+            } else {
+                System.out.println("You do not have administrative permissions.");
+                // Restringir a criação de canais e usuários
+            }
         } else {
             System.out.println("Invalid username or password.");
         }
     }
+
+
+
 
     private static void logoutUser() {
         isAuthenticated = false; // Desautentica o usuário
@@ -91,6 +105,12 @@ public class EmergencyCoordinationCLI {
     }
 
     private static void registerUser() {
+        // Verificar se o usuário está logado e se é ADMIN
+        if (loggedInUser == null || loggedInUser.getRole() != UserRole.ADMIN) {
+            System.out.println("Access denied. Only ADMIN users can register new users.");
+            return;
+        }
+
         System.out.print("Enter name: ");
         String name = scanner.nextLine();
 
@@ -110,16 +130,19 @@ public class EmergencyCoordinationCLI {
 
         UserRole role;
         try {
+            // Comparar diretamente com as constantes do enum
             role = UserRole.valueOf(roleInput);
         } catch (IllegalArgumentException e) {
             System.out.println("Invalid role. Defaulting to LOW_LEVEL.");
-            role = UserRole.LOW_LEVEL;
+            role = UserRole.LOW_LEVEL;  // Atribui LOW_LEVEL caso o input seja inválido
         }
 
-        User user = new User(name, password, role);
+        User user = new User(name, username, password, role);
         DatabaseManager.saveUser(user);
         System.out.println("User registered successfully.");
     }
+
+
 
     private static void viewUsers() {
         List<User> users = DatabaseManager.getUsers();
@@ -133,7 +156,15 @@ public class EmergencyCoordinationCLI {
         }
     }
 
+    private static User loggedInUser = null; // Armazena o usuário autenticado
+
     private static void createChannel() {
+        if (loggedInUser == null ||
+                !(loggedInUser.getRole() == UserRole.ADMIN || loggedInUser.getRole() == UserRole.HIGH_LEVEL)) {
+            System.out.println("Access denied. Only ADMIN and HIGH_LEVEL users can create channels.");
+            return;
+        }
+
         System.out.print("Enter channel name: ");
         String name = scanner.nextLine();
 
@@ -144,10 +175,11 @@ public class EmergencyCoordinationCLI {
         String isEmergencyInput = scanner.nextLine().toLowerCase();
         boolean isEmergency = isEmergencyInput.equals("yes");
 
-        Channel channel = new Channel(name, description, "admin", isEmergency);
+        Channel channel = new Channel(name, description, loggedInUser.getUsername(), isEmergency);
         DatabaseManager.saveChannel(channel);
         System.out.println("Channel created successfully.");
     }
+
 
     private static void viewChannels() {
         List<Channel> channels = DatabaseManager.getAllChannels();
