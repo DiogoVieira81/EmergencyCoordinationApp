@@ -6,6 +6,7 @@ import models.*;
 import server.DatabaseManager;
 import utils.ProtocolHandler;
 
+import javax.xml.crypto.Data;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -219,8 +220,30 @@ public class Client {
         out.writeObject(ProtocolHandler.createInitiateOperationRequest(operation.getType(), operation.getDescription()));
 
         ProtocolHandler.Response response = (ProtocolHandler.Response) in.readObject();
+        DatabaseManager.saveOperation(operation);
         if (!response.isSuccess()) {
             throw new IOException("Failed to initiate operation: " + response.getMessage());
+        } else {
+            System.out.println("Operation initiated successfully.");
+        }
+    }
+
+    public User getUserByUsername(String username) throws IOException, ClassNotFoundException {
+        // Implementação para obter um usuário pelo nome de usuário
+        ProtocolHandler.Request request = ProtocolHandler.createGetUserRequest(username);
+        out.writeObject(request);
+        out.flush();
+
+        Object response = in.readObject();
+        if (response instanceof ProtocolHandler.Response) {
+            ProtocolHandler.Response userResponse = (ProtocolHandler.Response) response;
+            if (userResponse.isSuccess()) {
+                return (User) userResponse.getData();
+            } else {
+                return null;
+            }
+        } else {
+            throw new IOException("Unexpected response type: " + response.getClass().getName());
         }
     }
 

@@ -11,6 +11,7 @@ import utils.ProtocolHandler;
 import utils.ProtocolHandler.Request;
 import utils.ProtocolHandler.Response;
 
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -76,6 +77,9 @@ public class ClientHandler implements Runnable {
             case INITIATE_OPERATION:
                 handleInitiateOperation(request);
                 break;
+            case GET_USER:
+                handleGetUser(request);
+                break;
             case APPROVE_OPERATION:
                 handleApproveOperation(request);
                 break;
@@ -94,12 +98,8 @@ public class ClientHandler implements Runnable {
     }
 
     private void handleLogin(Request request) {
-        System.out.print("Username: ");
-        Scanner scanner = null;
-        String username = scanner.nextLine();
-        System.out.print("Password: ");
-        String password = scanner.nextLine();
-
+        String username = (String) request.getData("username");
+        String password = (String) request.getData("password");
         User user = AuthenticationManager.authenticateUser(username, password);
         if (user != null) {
             currentUser = AuthenticationManager.getUserByUsername(username);
@@ -120,6 +120,16 @@ public class ClientHandler implements Runnable {
 
     public User getCurrentUser() {
         return this.currentUser;
+    }
+
+    private void handleGetUser(Request request) throws IOException {
+        String username = (String) request.getData("username");
+        User user = DatabaseManager.getUserByUsername(username);
+        if (user != null) {
+            sendResponse(ProtocolHandler.createSuccessResponse("User found", user));
+        } else {
+            sendResponse(ProtocolHandler.createErrorResponse("User not found"));
+        }
     }
 
     private void handleGetNotifications() throws IOException {
@@ -164,13 +174,14 @@ public class ClientHandler implements Runnable {
         //Checks client
         if (currentUser == null) throw new Exception("Current user is null.");
         //Checks request
-        if(request == null) throw new Exception("Request to register user isn't valid (null)");
+        if (request == null) throw new Exception("Request to register user isn't valid (null)");
         //Checks request type
-        if(!request.getType().equals(ProtocolHandler.RequestType.REGISTER_USER)) throw new Exception("Wrong request type: " + request.getType() + "\n Expected type: REGISTER_USER");
+        if (!request.getType().equals(ProtocolHandler.RequestType.REGISTER_USER))
+            throw new Exception("Wrong request type: " + request.getType() + "\n Expected type: REGISTER_USER");
 
         User userToRegister = new User((String) request.getData("name"), (String) request.getData("password"), (UserRole) request.getData("role"));
         //if the user doesn't exist then registers it.
-        if(!DatabaseManager.userExists(userToRegister.getUsername()))
+        if (!DatabaseManager.userExists(userToRegister.getUsername()))
             DatabaseManager.saveUser(Objects.requireNonNull(AuthenticationManager.registerUser(userToRegister.getName(), userToRegister.getUsername(), userToRegister.getPassword(), userToRegister.getRole())));
     }
 

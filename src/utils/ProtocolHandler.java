@@ -12,7 +12,7 @@ public class ProtocolHandler {
 
     public enum RequestType {
         LOGIN, LOGOUT, SEND_MESSAGE, JOIN_CHANNEL, LEAVE_CHANNEL,
-        CHANNEL_LIST, USER_LIST, INITIATE_OPERATION, APPROVE_OPERATION, GET_MESSAGES, GET_NOTIFICATIONS, CREATE_CHANNEL, REGISTER_USER
+        CHANNEL_LIST, USER_LIST, INITIATE_OPERATION, APPROVE_OPERATION, GET_MESSAGES, GET_NOTIFICATIONS, CREATE_CHANNEL, GET_USER, REGISTER_USER
     }
 
     public static class Request implements Serializable {
@@ -93,6 +93,13 @@ public class ProtocolHandler {
         request.addData("channelId", channelId);
         return request;
     }
+
+    public static Request createGetUserRequest(String username) {
+        Request request = new Request(RequestType.GET_USER);
+        request.addData("username", username);
+        return request;
+    }
+
 
     public static Request createChannelListRequest() {
         return new Request(RequestType.CHANNEL_LIST);

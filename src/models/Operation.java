@@ -22,9 +22,6 @@ public class Operation {
     private List<String> affectedAreas;
     private List<String> resources;
 
-    public Operation(String operationName, String operationDescription, String username, boolean b) {
-    }
-
     public enum OperationStatus {
         PENDING_APPROVAL, APPROVED, IN_PROGRESS, COMPLETED, CANCELLED
     }

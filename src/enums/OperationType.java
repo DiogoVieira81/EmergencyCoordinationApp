@@ -6,16 +6,30 @@ public enum OperationType {
      * of a high-level profile, such as a regional coordinator, to be initially
      * created and executed by mid-level profiles
      */
-    mass_evacuation,
+    MASS_EVACUATION,
     /**
      * Activation and maintenance
      * of emergency communication channels must be authorized by
      * medium level fis
      */
-    emergency_communications_activation,
+    EMERGENCY_COMMUNICATIONS_COORDINATION,
     /**
      * Approval for this
      * operation must be done by a low level profile
      */
-    emergency_resources_distribution
+    EMERGENCY_RESOURCES_DISTRIBUTION;
+
+    public static OperationType toOperationType(String type) {
+        switch (type.toUpperCase()) {
+            case "MASS_EVACUATION":
+                return MASS_EVACUATION;
+            case "EMERGENCY_COMMUNICATIONS_COORDINATION":
+                return EMERGENCY_COMMUNICATIONS_COORDINATION;
+            case "EMERGENCY_RESOURCES_COORDINATION":
+                return EMERGENCY_RESOURCES_DISTRIBUTION;
+            default:
+                System.out.println("Insira um tipo operação válido.");
+        }
+        return null;
+    }
 }
