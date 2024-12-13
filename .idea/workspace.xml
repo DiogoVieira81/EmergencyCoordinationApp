@@ -8,6 +8,8 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/operations.log" beforeDir="false" afterPath="$PROJECT_DIR$/operations.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/EmergencyCoordinationCLI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/EmergencyCoordinationCLI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/models/Operation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/Operation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/DatabaseManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/DatabaseManager.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

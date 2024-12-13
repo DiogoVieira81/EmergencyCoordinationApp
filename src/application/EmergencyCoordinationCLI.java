@@ -1,17 +1,21 @@
 package application;
 
+import client.Client;
+import enums.OperationType;
 import server.DatabaseManager;
 import utils.ProtocolHandler;
 import enums.UserRole;
 import models.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
 public class EmergencyCoordinationCLI {
 
     private static final Scanner scanner = new Scanner(System.in);
-    private static boolean isAuthenticated = false; // Controle de autenticação
+    private static boolean isAuthenticated = false;
+    private static EmergencyCoordinationCLI hierarchyManager;
 
     public static void main(String[] args) {
         DatabaseManager.initializeDatabase();
@@ -20,7 +24,7 @@ public class EmergencyCoordinationCLI {
         boolean running = true;
 
         while (running) {
-            // Exibe o menu conforme o estado de autenticação
+            
             if (!isAuthenticated) {
                 System.out.println("\nPlease select an option:");
                 System.out.println("1. Login");
@@ -39,11 +43,11 @@ public class EmergencyCoordinationCLI {
             System.out.print("Enter your choice: ");
 
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume the newline character
+            scanner.nextLine();
 
             if (!isAuthenticated) {
                 switch (choice) {
-                    case 1 -> loginUser(); // Apenas Login
+                    case 1 -> loginUser();
                     case 2 -> {
                         running = false;
                         System.out.println("Exiting the system. Goodbye!");
@@ -78,18 +82,18 @@ public class EmergencyCoordinationCLI {
 
         User user = DatabaseManager.getUser(username);
         if (user != null && user.getPassword().equals(DatabaseManager.hashPassword(password))) {
-            isAuthenticated = true; // Autenticado com sucesso
-            loggedInUser = user;  // Atribuindo o usuário logado
+            isAuthenticated = true;
+            loggedInUser = user;
             System.out.println("Login successful. Welcome, " + user.getName() + "!");
-            System.out.println("Your role is: " + user.getRole());  // Verificar o role do usuário
+            System.out.println("Your role is: " + user.getRole());
 
-            // Verificar o role do usuário
-            if (user.getRole() == UserRole.ADMIN) {  // Comparação direta com o enum
+
+            if (user.getRole() == UserRole.ADMIN) {
                 System.out.println("You have administrative permissions.");
-                // Permitir criação de canais e usuários
+
             } else {
                 System.out.println("You do not have administrative permissions.");
-                // Restringir a criação de canais e usuários
+
             }
         } else {
             System.out.println("Invalid username or password.");
@@ -100,12 +104,12 @@ public class EmergencyCoordinationCLI {
 
 
     private static void logoutUser() {
-        isAuthenticated = false; // Desautentica o usuário
+        isAuthenticated = false;
         System.out.println("You have been logged out.");
     }
 
     private static void registerUser() {
-        // Verificar se o usuário está logado e se é ADMIN
+
         if (loggedInUser == null || loggedInUser.getRole() != UserRole.ADMIN) {
             System.out.println("Access denied. Only ADMIN users can register new users.");
             return;
@@ -130,11 +134,11 @@ public class EmergencyCoordinationCLI {
 
         UserRole role;
         try {
-            // Comparar diretamente com as constantes do enum
+
             role = UserRole.valueOf(roleInput);
         } catch (IllegalArgumentException e) {
             System.out.println("Invalid role. Defaulting to LOW_LEVEL.");
-            role = UserRole.LOW_LEVEL;  // Atribui LOW_LEVEL caso o input seja inválido
+            role = UserRole.LOW_LEVEL;
         }
 
         User user = new User(name, username, password, role);
@@ -156,7 +160,7 @@ public class EmergencyCoordinationCLI {
         }
     }
 
-    private static User loggedInUser = null; // Armazena o usuário autenticado
+    private static User loggedInUser = null;
 
     private static void createChannel() {
         if (loggedInUser == null ||
@@ -207,7 +211,7 @@ public class EmergencyCoordinationCLI {
         System.out.println("4. ALERT");
         System.out.print("Enter your choice: ");
         int typeChoice = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline character
+        scanner.nextLine();
 
         Message.MessageType messageType;
         switch (typeChoice) {
@@ -241,4 +245,23 @@ public class EmergencyCoordinationCLI {
             }
         }
     }
+
+    private static void initiateOperation() {
+        if (loggedInUser == null || loggedInUser.getRole() == UserRole.LOW_LEVEL || loggedInUser.getRole() == UserRole.MID_LEVEL) {
+            System.out.println("Access denied. Only HIGH_LEVEL or ADMIN users can initiate an operation.");
+            return;
+        }
+
+        System.out.print("Enter operation name: ");
+        String operationName = scanner.nextLine();
+
+        System.out.print("Enter operation description: ");
+        String operationDescription = scanner.nextLine();
+
+        Operation operation = new Operation(operationName, operationDescription, loggedInUser.getUsername(), false);
+        DatabaseManager.saveOperation(operation);
+        System.out.println("Operation initiated successfully. Awaiting approval.");
+    }
+
 }
+
