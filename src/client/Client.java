@@ -6,12 +6,12 @@ import models.*;
 import server.DatabaseManager;
 import utils.ProtocolHandler;
 
-import javax.xml.crypto.Data;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -44,6 +44,7 @@ public class Client {
     public void connect() throws IOException {
         try {
             socket = new Socket(serverAddress, serverPort);
+            socket.setSoTimeout(10000); //times out in 10 seconds if it doesn't get a response
             out = new ObjectOutputStream(socket.getOutputStream());
             out.flush();
             in = new ObjectInputStream(socket.getInputStream());
@@ -66,34 +67,69 @@ public class Client {
         }
     }
 
-    public boolean login(String username, String password) throws IOException {
+//    public boolean login(String username, String password) throws IOException {
+//        try {
+//            // Create a login request object
+//            ProtocolHandler.Request loginRequest = ProtocolHandler.createLoginRequest(username, password);
+//            System.out.println("Antes de enviar o pedido");
+//            // Send the login request to the server
+//            out.writeObject(loginRequest);
+//            out.flush(); // Ensure the request is sent immediately
+//            System.out.println("Depois de enviar o pedido"); // o programa para aqui
+//            System.out.println("a receber resposta" + in.readObject().toString());
+//            ProtocolHandler.Response serverResponse = (ProtocolHandler.Response) in.readObject();
+//            System.out.println(serverResponse.isSuccess());
+//            // Check if login was successful
+//            if (serverResponse.isSuccess()) {
+//                this.setCurrentUser((User) serverResponse.getData());
+//                System.out.println("Login successful: " + serverResponse.getMessage());
+//                return true; // Login was successful
+//            } else {
+//                System.out.println("Login failed: " + serverResponse.getMessage());
+//                return false; // Login failed
+//            }
+//        } catch (EOFException e) {
+//            System.err.println("Connection closed by server.");
+//            throw new IOException("Connection closed by server.", e);
+//        } catch (ClassNotFoundException e) {
+//            throw new IOException("Error reading server response", e);
+//        }
+//    }
+
+    public boolean login(String username, String password) throws IOException, ClassNotFoundException {
         try {
             // Create a login request object
             ProtocolHandler.Request loginRequest = ProtocolHandler.createLoginRequest(username, password);
-
+            System.out.println("Antes de enviar o pedido");
             // Send the login request to the server
             out.writeObject(loginRequest);
             out.flush(); // Ensure the request is sent immediately
+            System.out.println("Depois de enviar o pedido");
 
+            // Read the server's response
             ProtocolHandler.Response serverResponse = (ProtocolHandler.Response) in.readObject();
-            if (serverResponse != null) {
-                // Check if login was successful
-                if (serverResponse.isSuccess()) {
-                    this.setCurrentUser((User) serverResponse.getData());
-                    System.out.println("Login successful: " + serverResponse.getMessage());
-                    return true; // Login was successful
-                } else {
-                    System.out.println("Login failed: " + serverResponse.getMessage());
-                    return false; // Login failed
-                }
-            } else {
-                throw new IOException("Unexpected response type: " + serverResponse.getClass().getName());
-            }
+            System.out.println("Recebeu resposta do servidor: " + serverResponse.isSuccess());
 
+            // Check if login was successful
+            if (serverResponse.isSuccess()) {
+                this.setCurrentUser((User) serverResponse.getData());
+                System.out.println("Login successful: " + serverResponse.getMessage());
+                return true; // Login was successful
+            } else {
+                System.out.println("Login failed: " + serverResponse.getMessage());
+                return false; // Login failed
+            }
+        } catch (EOFException e) {
+            System.err.println("Connection closed by server.");
+            throw new IOException("Connection closed by server.", e);
         } catch (ClassNotFoundException e) {
-            throw new IOException("Error reading server response", e);
+            throw new ClassNotFoundException("Error reading server response", e);
+        } catch (IOException e) {
+            System.err.println("Error during login: " + e.getMessage());
+            throw e;
         }
     }
+
 
     private void startListening() {
         new Thread(() -> {

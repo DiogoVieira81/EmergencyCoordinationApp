@@ -2,12 +2,12 @@ package application;
 
 import client.Client;
 import enums.OperationType;
-import server.DatabaseManager;
-import utils.ProtocolHandler;
 import enums.UserRole;
-import models.*;
+import models.Channel;
+import models.Message;
+import models.Notification;
+import models.User;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -18,22 +18,33 @@ public class EmergencyCoordinationCLI {
 //    private static EmergencyCoordinationCLI hierarchyManager;
 //    private final Client client;
 
-    private Scanner scanner;
     private Client client;
     private User currentUser;
+    private boolean isAuthenticated = false;
+    private boolean isRunning = true;
+    private Scanner scanner = new Scanner(System.in);
 
     public EmergencyCoordinationCLI(Client client) {
-        this.scanner = new Scanner(System.in);
         this.client = client;
     }
 
     public void start() {
         System.out.println("Welcome to the Emergency Coordination System");
         while (true) {
-            if (currentUser == null) {
-                showLoginMenu();
-            } else {
-                showMainMenu();
+            try {
+                if (currentUser == null) {
+                    showLoginMenu();
+                    if (currentUser != null) { // Check if login was successful
+                        System.out.println("Login successful. Proceeding to main menu...");
+                        showMainMenu(); // Show main menu after successful login
+                    }
+                } else {
+                    showMainMenu();
+                }
+            } catch (Exception e) {
+                System.err.println("An error occurred: " + e.getMessage());
+                // You can choose to exit the application or handle the exception differently
+                System.exit(1);
             }
         }
     }
@@ -48,16 +59,79 @@ public class EmergencyCoordinationCLI {
 
         switch (choice) {
             case 1:
-                login();
+                try {
+                    login();
+                } catch (Exception e) {
+                    System.err.println("Error during login: " + e.getMessage());
+                }
                 break;
             case 2:
                 System.out.println("Exiting the system. Goodbye!");
                 System.exit(0);
+                break;
             default:
                 System.out.println("Invalid choice. Please try again.");
         }
     }
 
+    private void login() throws Exception {
+        System.out.print("Enter username: ");
+        String username = scanner.nextLine();
+        System.out.print("Enter password: ");
+        String password = scanner.nextLine();
+
+        try {
+            boolean success = client.login(username, password);
+            if (success) {
+                System.out.println("Login successful!");
+                this.currentUser = client.getCurrentUser();
+                showMainMenu(); // Show main menu after successful login
+            } else {
+                System.out.println("Login failed. Please check your credentials.");
+            }
+        } catch (Exception e) {
+            System.err.println("Error during login: " + e.getMessage());
+        }
+    }
+
+//        while (true) {
+//            try {
+//                if (currentUser == null) {
+//                    showLoginMenu();
+//                    if (currentUser != null) { // Check if login was successful
+//                        System.out.println("Login successful. Proceeding to main menu...");
+//                    }
+//                } else {
+//                    showMainMenu();
+//                }
+//            } catch (Exception e) {
+//                System.err.println("An error occurred: " + e.getMessage());
+//                // You can choose to exit the application or handle the exception differently
+//                System.exit(1);
+//            }
+//        }
+
+
+    //    private void showLoginMenu() {
+//        System.out.println("\n--- Login Menu ---");
+//        System.out.println("1. Login");
+//        System.out.println("2. Exit");
+//        System.out.print("Enter your choice: ");
+//        int choice = scanner.nextInt();
+//        scanner.nextLine(); // Consume newline
+//
+//        switch (choice) {
+//            case 1:
+//                login();
+//                break;
+//            case 2:
+//                System.out.println("Exiting the system. Goodbye!");
+//                System.exit(0);
+//            default:
+//                System.out.println("Invalid choice. Please try again.");
+//        }
+//    }
+//
     private void showMainMenu() {
         System.out.println("\n--- Main Menu ---");
         System.out.println("1. View Messages");
@@ -100,11 +174,13 @@ public class EmergencyCoordinationCLI {
                 else invalidChoice();
                 break;
             case 6:
-                if (currentUser.getRole() == UserRole.HIGH_LEVEL || currentUser.getRole() == UserRole.ADMIN) createChannel();
+                if (currentUser.getRole() == UserRole.HIGH_LEVEL || currentUser.getRole() == UserRole.ADMIN)
+                    createChannel();
                 else invalidChoice();
                 break;
             case 7:
-                if (currentUser.getRole() == UserRole.HIGH_LEVEL || currentUser.getRole() == UserRole.ADMIN) initiateOperation();
+                if (currentUser.getRole() == UserRole.HIGH_LEVEL || currentUser.getRole() == UserRole.ADMIN)
+                    initiateOperation();
                 else invalidChoice();
                 break;
             default:
@@ -116,24 +192,23 @@ public class EmergencyCoordinationCLI {
         System.out.println("You don't have permission to perform this action.");
     }
 
-    private void login() {
-        System.out.print("Enter username: ");
-        String username = scanner.nextLine();
-        System.out.print("Enter password: ");
-        String password = scanner.nextLine();
-
-        try {
-            boolean success = client.login(username, password);
-            if (success) {
-                System.out.println("Login successful!");
-                currentUser = client.getCurrentUser();
-            } else {
-                System.out.println("Login failed. Please check your credentials.");
-            }
-        } catch (Exception e) {
-            System.out.println("Error during login: " + e.getMessage());
-        }
-    }
+//    private void login() throws Exception {
+//        System.out.print("Enter username: ");
+//        String username = this.scanner.nextLine();
+//        System.out.print("Enter password: ");
+//        String password = this.scanner.nextLine();
+//        System.out.println("Dadods inseridos");
+//
+//        boolean success = client.login(username, password);
+//        System.out.println("Login sucesso? " + success);
+//        if (success) {
+//            System.out.println("Login successful!");
+//            this.currentUser = client.getCurrentUser();
+//        } else {
+//            System.out.println("Login failed. Please check your credentials.");
+//        }
+//
+//    }
 
     private void logout() {
         try {
@@ -163,9 +238,9 @@ public class EmergencyCoordinationCLI {
 
     private void sendMessage() {
         System.out.print("Enter recipient username or channel ID: ");
-        String recipient = scanner.nextLine();
+        String recipient = this.scanner.nextLine();
         System.out.print("Enter message content: ");
-        String content = scanner.nextLine();
+        String content = this.scanner.nextLine();
 
         try {
             Message message = new Message(currentUser.getId(), recipient, null, content, Message.MessageType.DIRECT);
@@ -210,7 +285,7 @@ public class EmergencyCoordinationCLI {
 
     private void joinChannel() {
         System.out.print("Enter channel ID to join: ");
-        String channelId = scanner.nextLine();
+        String channelId = this.scanner.nextLine();
 
         try {
             client.joinChannel(channelId);
@@ -222,11 +297,11 @@ public class EmergencyCoordinationCLI {
 
     private void createChannel() {
         System.out.print("Enter channel name: ");
-        String channelName = scanner.nextLine();
+        String channelName = this.scanner.nextLine();
         System.out.print("Enter channel description: ");
-        String description = scanner.nextLine();
+        String description = this.scanner.nextLine();
         System.out.print("Enter username to add: ");
-        String usernameToAdd = scanner.nextLine();
+        String usernameToAdd = this.scanner.nextLine();
         System.out.print("Is this an emergency channel? (true/false): ");
         boolean isEmergency = Boolean.parseBoolean(scanner.nextLine());
 
@@ -250,9 +325,9 @@ public class EmergencyCoordinationCLI {
 
     private void initiateOperation() {
         System.out.print("Enter operation name: ");
-        String name = scanner.nextLine();
+        String name = this.scanner.nextLine();
         System.out.print("Enter operation description: ");
-        String description = scanner.nextLine();
+        String description = this.scanner.nextLine();
         System.out.println("Enter operation type (EVACUATION, RESCUE, SUPPLY_DISTRIBUTION): ");
         OperationType type = OperationType.valueOf(scanner.nextLine().toUpperCase());
 
@@ -265,48 +340,47 @@ public class EmergencyCoordinationCLI {
     }
 
 
-
 //    public static void main(String[] args) {
 //        DatabaseManager.initializeDatabase();
 //        System.out.println("\n=== Emergency Coordination System ===\n");
 //
 //        boolean running = true;
 //
-//        while (running) {
-//
-//            if (!isAuthenticated) {
-//                System.out.println("\nPlease select an option:");
-//                System.out.println("1. Login");
-//                System.out.println("2. Exit");
-//            } else {
-//                System.out.println("\nPlease select an option:");
-//                System.out.println("1. Register a User");
-//                System.out.println("2. View Users");
-//                System.out.println("3. Create a Channel");
-//                System.out.println("4. View Channels");
-//                System.out.println("5. Send a Message");
-//                System.out.println("6. View Messages");
-//                System.out.println("7. Initiate Operation");
-//                System.out.println("8. Logout");
-//                System.out.println("9. Exit");
-//            }
-//            System.out.print("Enter your choice: ");
-//
-//            int choice = scanner.nextInt();
-//            scanner.nextLine();
-//
-//            if (!isAuthenticated) {
-//                switch (choice) {
-//                    case 1 -> loginUser();
-//                    case 2 -> {
-//                        running = false;
-//                        System.out.println("Exiting the system. Goodbye!");
-//                    }
-//                    default -> System.out.println("Invalid choice. Please try again.");
-//                }
-//            } else {
-//                switch (choice) {
-//                    case 1 -> registerUser();
+
+    private void menu() throws Exception {
+        while (true) {
+            if (currentUser == null) {
+                System.out.println("\nPlease select an option:");
+                System.out.println("1. Login");
+                System.out.println("2. Exit");
+            } else {
+                System.out.println("\nPlease select an option:");
+                System.out.println("1. Register a User");
+                System.out.println("2. View Users");
+                System.out.println("3. Create a Channel");
+                System.out.println("4. View Channels");
+                System.out.println("5. Send a Message");
+                System.out.println("6. View Messages");
+                System.out.println("7. Initiate Operation");
+                System.out.println("8. Logout");
+                System.out.println("9. Exit");
+            }
+            System.out.print("Enter your choice: ");
+
+            int choice = this.scanner.nextInt();
+            this.scanner.nextLine();
+
+            if (currentUser == null) {
+                switch (choice) {
+                    case 1 -> login();
+                    case 2 -> {
+                        System.exit(0);
+                    }
+                    default -> System.out.println("Invalid choice. Please try again.");
+                }
+            } else {
+                switch (choice) {
+                    case 1 -> registerUser();
 //                    case 2 -> viewUsers();
 //                    case 3 -> createChannel();
 //                    case 4 -> viewChannels();
@@ -318,11 +392,15 @@ public class EmergencyCoordinationCLI {
 //                        running = false;
 //                        System.out.println("Exiting the system. Goodbye!");
 //                    }
-//                    default -> System.out.println("Invalid choice. Please try again.");
-//                }
-//            }
-//        }
-//    }
+                    default -> System.out.println("Invalid choice. Please try again.");
+                }
+            }
+        }
+    }
+
+    private void registerUser() {
+
+    }
 //
 //    private static void loginUser() {
 //        System.out.print("Enter username: ");

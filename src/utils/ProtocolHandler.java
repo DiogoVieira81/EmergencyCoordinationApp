@@ -4,6 +4,7 @@ import enums.OperationType;
 import models.Message;
 import models.User;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +17,7 @@ public class ProtocolHandler {
     }
 
     public static class Request implements Serializable {
+        @Serial
         private static final long serialVersionUID = 1L;
         private RequestType type;
         private Map<String, Object> data;
@@ -124,6 +126,7 @@ public class ProtocolHandler {
 
     // Additional methods for handling server responses can be added here
     public static class Response implements Serializable {
+        @Serial
         private static final long serialVersionUID = 1L;
         private boolean success;
         private String message;

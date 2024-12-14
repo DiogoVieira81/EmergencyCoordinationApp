@@ -11,14 +11,12 @@ import utils.ProtocolHandler;
 import utils.ProtocolHandler.Request;
 import utils.ProtocolHandler.Response;
 
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
 import java.util.Objects;
-import java.util.Scanner;
 
 public class ClientHandler implements Runnable {
     private Socket clientSocket;
@@ -97,25 +95,29 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void handleLogin(Request request) {
+    private void handleLogin(Request request) throws IOException {
         String username = (String) request.getData("username");
         String password = (String) request.getData("password");
         User user = AuthenticationManager.authenticateUser(username, password);
         if (user != null) {
             currentUser = AuthenticationManager.getUserByUsername(username);
-            System.out.println("Login successful!");
+            Response response = ProtocolHandler.createSuccessResponse("Login sucessfull!", currentUser);
+            System.out.println(currentUser.getName());
+            sendResponse(response);
             logger.logAction(currentUser.getId(), "LOGIN", "User logged in");
         } else {
-            System.out.println("Invalid credentials. Please try again.");
+            Response response = ProtocolHandler.createErrorResponse("Invalid credentials: login failed!");
+            sendResponse(response);
+            logger.logAction(currentUser.getId(), "LOGIN", "User login failed");
         }
     }
 
     private void handleGetMessages() throws IOException {
         User currentUser = getCurrentUser();
         List<Message> messages = DatabaseManager.getMessagesForUser(currentUser.getId());
-        Response response = new Response(true, "Messages retrieved successfully", messages);
-        out.writeObject(response);
-        out.flush();
+        //Response response = new Response(true, "Messages retrieved successfully", messages);
+//        out.writeObject(response);
+//        out.flush();
     }
 
     public User getCurrentUser() {
@@ -255,7 +257,7 @@ public class ClientHandler implements Runnable {
 
     private void sendResponse(Response response) throws IOException {
         out.writeObject(response);
-        out.flush();
+        out.flush(); //send the response immediately
     }
 
     private void closeConnection() {
