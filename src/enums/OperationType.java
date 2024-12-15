@@ -29,6 +29,7 @@ public enum OperationType {
                 return EMERGENCY_RESOURCES_DISTRIBUTION;
             default:
                 System.out.println("Insira um tipo operação válido.");
+                break;
         }
         return null;
     }

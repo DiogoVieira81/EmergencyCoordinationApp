@@ -350,7 +350,7 @@ public class Client {
 
     public void registerUser(String name, String password, UserRole userRole) throws IOException {
         if (currentUser == null || currentUser.getRole() != UserRole.ADMIN) {
-            System.out.println("Apenas administradores podem registar novos usuários.");
+            System.out.println("Apenas administradores podem registar novos utilizadores.");
             return;
         }
 

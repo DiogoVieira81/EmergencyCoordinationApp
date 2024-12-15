@@ -7,11 +7,11 @@
     <list default="true" id="069c91f5-17fb-43ce-95ab-2d784f969fb2" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/operations.log" beforeDir="false" afterPath="$PROJECT_DIR$/operations.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/EmergencyCoordinationCLI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/EmergencyCoordinationCLI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/enums/OperationType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/enums/OperationType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/enums/UserRole.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/enums/UserRole.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/server/ClientHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/ClientHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/ProtocolHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/ProtocolHandler.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,28 +49,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;Application.EmergencyCoordinationApp.executor&quot;: &quot;Run&quot;,
-    &quot;Application.EmergencyCoordinationCLI.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Run EmergencyCoordinationApp.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Run Server.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Server.executor&quot;: &quot;Run&quot;,
-    &quot;JAR Application.bson-5.3.0-beta0.jar.executor&quot;: &quot;Run&quot;,
-    &quot;JAR Application.javafx.base.jar (1).executor&quot;: &quot;Run&quot;,
-    &quot;JAR Application.javafx.base.jar.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;FIX-Adicionar-opcao-operacoes-e-teste&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/xavie/IdeaProjects/ac_8200690_8200330/dependencies/mongo-java-driver-3.12.14.jar&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.externalResources&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "Application.EmergencyCoordinationApp.executor": "Run",
+    "Application.EmergencyCoordinationCLI.executor": "Run",
+    "Application.Main.executor": "Run",
+    "Application.Run EmergencyCoordinationApp.executor": "Run",
+    "Application.Run Server.executor": "Run",
+    "Application.Server.executor": "Run",
+    "JAR Application.bson-5.3.0-beta0.jar.executor": "Run",
+    "JAR Application.javafx.base.jar (1).executor": "Run",
+    "JAR Application.javafx.base.jar.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "FIX-Adicionar-opcao-operacoes-e-teste",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/xavie/IdeaProjects/ac_8200690_8200330/dependencies/mongo-java-driver-3.12.14.jar",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "advanced.settings"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\xavie\IdeaProjects\ac_8200690_8200330\dependencies" />

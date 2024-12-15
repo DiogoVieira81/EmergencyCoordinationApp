@@ -183,7 +183,7 @@ public class ClientHandler implements Runnable {
 
         User userToRegister = new User((String) request.getData("name"), (String) request.getData("password"), (UserRole) request.getData("role"));
         //if the user doesn't exist then registers it.
-        if (!DatabaseManager.userExists(userToRegister.getUsername()))
+        if (!DatabaseManager.userExists(userToRegister.getId()))
             DatabaseManager.saveUser(Objects.requireNonNull(AuthenticationManager.registerUser(userToRegister.getName(), userToRegister.getUsername(), userToRegister.getPassword(), userToRegister.getRole())));
     }
 

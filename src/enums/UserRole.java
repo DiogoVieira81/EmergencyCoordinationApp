@@ -16,5 +16,20 @@ public enum UserRole {
     /**
      * the admin
      */
-    ADMIN
+    ADMIN;
+
+    public static UserRole toUserRole(String userRole) {
+        switch (userRole.toUpperCase()) {
+            case "LOW_LEVEL":
+                return LOW_LEVEL;
+            case "MID_LEVEL":
+                return MID_LEVEL;
+            case "HIGH_LEVEL":
+                return HIGH_LEVEL;
+            default:
+                System.out.println("Insira um tipo operação válido.");
+                break;
+        }
+        return null;
+    }
 }

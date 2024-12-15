@@ -8,6 +8,7 @@ import models.Message;
 import models.Notification;
 import models.User;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -34,10 +35,6 @@ public class EmergencyCoordinationCLI {
             try {
                 if (currentUser == null) {
                     showLoginMenu();
-                    if (currentUser != null) { // Check if login was successful
-                        System.out.println("Login successful. Proceeding to main menu...");
-                        showMainMenu(); // Show main menu after successful login
-                    }
                 } else {
                     showMainMenu();
                 }
@@ -132,7 +129,7 @@ public class EmergencyCoordinationCLI {
 //        }
 //    }
 //
-    private void showMainMenu() {
+    private void showMainMenu() throws IOException {
         System.out.println("\n--- Main Menu ---");
         System.out.println("1. View Messages");
         if (currentUser.getRole() != UserRole.LOW_LEVEL) {
@@ -144,6 +141,7 @@ public class EmergencyCoordinationCLI {
         if (currentUser.getRole() == UserRole.HIGH_LEVEL || currentUser.getRole() == UserRole.ADMIN) {
             System.out.println("6. Create Channel");
             System.out.println("7. Initiate Operation");
+            System.out.println("8. Register User");
         }
         System.out.println("0. Logout");
         System.out.print("Enter your choice: ");
@@ -181,6 +179,11 @@ public class EmergencyCoordinationCLI {
             case 7:
                 if (currentUser.getRole() == UserRole.HIGH_LEVEL || currentUser.getRole() == UserRole.ADMIN)
                     initiateOperation();
+                else invalidChoice();
+                break;
+            case 8:
+                if (currentUser.getRole() == UserRole.ADMIN)
+                    registerUser();
                 else invalidChoice();
                 break;
             default:
@@ -347,59 +350,69 @@ public class EmergencyCoordinationCLI {
 //        boolean running = true;
 //
 
-    private void menu() throws Exception {
-        while (true) {
-            if (currentUser == null) {
-                System.out.println("\nPlease select an option:");
-                System.out.println("1. Login");
-                System.out.println("2. Exit");
-            } else {
-                System.out.println("\nPlease select an option:");
-                System.out.println("1. Register a User");
-                System.out.println("2. View Users");
-                System.out.println("3. Create a Channel");
-                System.out.println("4. View Channels");
-                System.out.println("5. Send a Message");
-                System.out.println("6. View Messages");
-                System.out.println("7. Initiate Operation");
-                System.out.println("8. Logout");
-                System.out.println("9. Exit");
-            }
-            System.out.print("Enter your choice: ");
-
-            int choice = this.scanner.nextInt();
-            this.scanner.nextLine();
-
-            if (currentUser == null) {
-                switch (choice) {
-                    case 1 -> login();
-                    case 2 -> {
-                        System.exit(0);
-                    }
-                    default -> System.out.println("Invalid choice. Please try again.");
-                }
-            } else {
-                switch (choice) {
-                    case 1 -> registerUser();
-//                    case 2 -> viewUsers();
-//                    case 3 -> createChannel();
-//                    case 4 -> viewChannels();
-//                    case 5 -> sendMessage();
-//                    case 6 -> viewMessages();
-//                    //case 7 -> break;
-//                    case 8 -> logoutUser();
-//                    case 9 -> {
-//                        running = false;
-//                        System.out.println("Exiting the system. Goodbye!");
+//    private void menu() throws Exception {
+//        while (true) {
+//            if (currentUser == null) {
+//                System.out.println("\nPlease select an option:");
+//                System.out.println("1. Login");
+//                System.out.println("2. Exit");
+//            } else {
+//                System.out.println("\nPlease select an option:");
+//                System.out.println("1. Register a User");
+//                System.out.println("2. View Users");
+//                System.out.println("3. Create a Channel");
+//                System.out.println("4. View Channels");
+//                System.out.println("5. Send a Message");
+//                System.out.println("6. View Messages");
+//                System.out.println("7. Initiate Operation");
+//                System.out.println("8. Logout");
+//                System.out.println("9. Exit");
+//            }
+//            System.out.print("Enter your choice: ");
+//
+//            int choice = this.scanner.nextInt();
+//            this.scanner.nextLine();
+//
+//            if (currentUser == null) {
+//                switch (choice) {
+//                    case 1 -> login();
+//                    case 2 -> {
+//                        System.exit(0);
 //                    }
-                    default -> System.out.println("Invalid choice. Please try again.");
-                }
-            }
+//                    default -> System.out.println("Invalid choice. Please try again.");
+//                }
+//            } else {
+//                switch (choice) {
+//                    case 1 -> registerUser();
+////                    case 2 -> viewUsers();
+////                    case 3 -> createChannel();
+////                    case 4 -> viewChannels();
+////                    case 5 -> sendMessage();
+////                    case 6 -> viewMessages();
+////                    //case 7 -> break;
+////                    case 8 -> logoutUser();
+////                    case 9 -> {
+////                        running = false;
+////                        System.out.println("Exiting the system. Goodbye!");
+////                    }
+//                    default -> System.out.println("Invalid choice. Please try again.");
+//                }
+//            }
+//        }
+//    }
+
+    private void registerUser() throws IOException {
+        if (currentUser == null || currentUser.getRole() != UserRole.ADMIN) {
+            return;
         }
-    }
+        System.out.println("Insert user's name: ");
+        String name = scanner.nextLine();
+        System.out.println("Inser user's password: ");
+        String password = scanner.nextLine();
+        System.out.println("Inser user's role (HIGH_LEVEL, MID_LEVEL, LOW_LEVEL): ");
+        String role = scanner.nextLine();
 
-    private void registerUser() {
-
+        client.registerUser(name, password, UserRole.toUserRole(role));
     }
 //
 //    private static void loginUser() {
