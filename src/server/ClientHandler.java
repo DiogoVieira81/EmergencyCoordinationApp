@@ -34,10 +34,6 @@ public class ClientHandler implements Runnable {
         this.isRunning = true;
     }
 
-    public ClientHandler() {
-
-    }
-
     @Override
     public void run() {
         try {
@@ -101,7 +97,7 @@ public class ClientHandler implements Runnable {
         User user = AuthenticationManager.authenticateUser(username, password);
         if (user != null) {
             currentUser = AuthenticationManager.getUserByUsername(username);
-            Response response = ProtocolHandler.createSuccessResponse("Login sucessfull!", currentUser);
+            Response response = ProtocolHandler.createSuccessResponse("Login successful!", currentUser);
             System.out.println(currentUser.getName());
             sendResponse(response);
             logger.logAction(currentUser.getId(), "LOGIN", "User logged in");
@@ -182,9 +178,13 @@ public class ClientHandler implements Runnable {
             throw new Exception("Wrong request type: " + request.getType() + "\n Expected type: REGISTER_USER");
 
         User userToRegister = new User((String) request.getData("name"), (String) request.getData("password"), (UserRole) request.getData("role"));
-        //if the user doesn't exist then registers it.
-        if (!DatabaseManager.userExists(userToRegister.getId()))
-            DatabaseManager.saveUser(Objects.requireNonNull(AuthenticationManager.registerUser(userToRegister.getName(), userToRegister.getUsername(), userToRegister.getPassword(), userToRegister.getRole())));
+        if(AuthenticationManager.registerUser(userToRegister)) {
+            logger.logAction(this.currentUser.getId(), "USER REGISTER", "SUCCESS");
+        }
+
+//        //if the user doesn't exist then registers it.
+//        if (!DatabaseManager.userExists(userToRegister.getId()))
+//            DatabaseManager.saveUser(Objects.requireNonNull(AuthenticationManager.registerUser(userToRegister.getName(), userToRegister.getUsername(), userToRegister.getPassword(), userToRegister.getRole())));
     }
 
     private void handleSendMessage(Request request) throws IOException {
@@ -265,7 +265,7 @@ public class ClientHandler implements Runnable {
         try {
             if (in != null) in.close();
             if (out != null) out.close();
-            if (clientSocket != null) clientSocket.close();
+            if (clientSocket != null && !clientSocket.isClosed()) clientSocket.close();
         } catch (IOException e) {
             System.err.println("Error closing connection: " + e.getMessage());
         }

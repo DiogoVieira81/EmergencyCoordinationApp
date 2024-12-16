@@ -1,6 +1,5 @@
 package utils;
 
-import enums.UserRole;
 import models.User;
 import server.DatabaseManager;
 
@@ -16,7 +15,7 @@ public class AuthenticationManager {
     private static Map<String, String> sessions;
 
     public AuthenticationManager() {
-        this.users = new HashMap<>();
+        users = new HashMap<>();
         loadUsersFromDatabase();
 
     }
@@ -33,16 +32,14 @@ public class AuthenticationManager {
         }
     }
 
-    public static User registerUser(String name, String username, String password, UserRole role) {
-        if (users.containsKey(username)) {
-            return null; // User already exists
+    public static boolean registerUser(User user) {
+        if (!DatabaseManager.userExists(user.getUsername())) {
+            String id = UUID.randomUUID().toString();
+            users.put(user.getUsername(), user);
+            DatabaseManager.saveUser(user);
+            return true;
         }
-
-        String id = UUID.randomUUID().toString();
-        String hashedPassword = hashPassword(password);
-        User newUser = new User(name, hashedPassword, role);
-        users.put(username, newUser);
-        return newUser;
+        return false;
     }
 
     public static User authenticateUser(String username, String password) {

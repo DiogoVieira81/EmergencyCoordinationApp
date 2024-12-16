@@ -4,6 +4,8 @@ import enums.UserRole;
 import org.bson.Document;
 
 import java.io.Serializable;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class User implements Serializable {
@@ -20,7 +22,7 @@ public class User implements Serializable {
         this.name = name;
         this.id = this.name + this.counter.incrementAndGet();
         this.username = this.id;
-        this.password = password;
+        this.password = this.hashPassword(password);
         this.role = role;
         this.isOnline = false;
     }
@@ -29,7 +31,7 @@ public class User implements Serializable {
     public User(String name, String username, String password, UserRole role) {
         this.name = name;
         this.username = username;
-        this.password = password;
+        this.password = this.hashPassword(password);
         this.role = role;
         this.id = name + counter.incrementAndGet(); // Gera um ID único
         this.isOnline = false;
@@ -88,6 +90,21 @@ public class User implements Serializable {
                 .append("role", this.role.toString())
                 .append("isOnline", this.isOnline);
     }
+
+    private String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashedBytes = md.digest(password.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashedBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error hashing password", e);
+        }
+    }
+
 
     @Override
     public String toString() {

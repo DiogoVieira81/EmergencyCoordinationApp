@@ -8,7 +8,6 @@ import enums.UserRole;
 import models.*;
 import org.bson.Document;
 
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
@@ -51,6 +50,7 @@ public class DatabaseManager {
         }
         return false;
     }
+
     // checks if the user exists
     public static boolean userExists(String username) {
         Document user = usersCollection.find(new Document("username", username)).first();
@@ -68,7 +68,7 @@ public class DatabaseManager {
             if (getUserByUsername("admin") == null) {
                 User adminUser = new User(
                         "Admin",
-                        hashPassword("adminpassword"),
+                        "adminpassword",
                         UserRole.ADMIN
                 );
                 saveUser(adminUser);
@@ -139,7 +139,7 @@ public class DatabaseManager {
         Document doc = new Document("_id", user.getId())
                 .append("name", user.getName())
                 .append("username", user.getUsername())
-                .append("password", hashPassword(user.getPassword()))
+                .append("password", user.getPassword())
                 .append("role", user.getRole().toString());
         collection.insertOne(doc);
     }
