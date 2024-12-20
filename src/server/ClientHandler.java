@@ -16,7 +16,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
-import java.util.Objects;
 
 public class ClientHandler implements Runnable {
     private Socket clientSocket;
@@ -94,18 +93,13 @@ public class ClientHandler implements Runnable {
     private void handleLogin(Request request) throws IOException {
         String username = (String) request.getData("username");
         String password = (String) request.getData("password");
-        User user = AuthenticationManager.authenticateUser(username, password);
-        if (user != null) {
-            currentUser = AuthenticationManager.getUserByUsername(username);
-            Response response = ProtocolHandler.createSuccessResponse("Login successful!", currentUser);
-            System.out.println(currentUser.getName());
-            sendResponse(response);
-            logger.logAction(currentUser.getId(), "LOGIN", "User logged in");
-        } else {
-            Response response = ProtocolHandler.createErrorResponse("Invalid credentials: login failed!");
-            sendResponse(response);
-            logger.logAction(currentUser.getId(), "LOGIN", "User login failed");
-        }
+
+        currentUser = AuthenticationManager.authenticateUser(username, password);
+
+        Response response = ProtocolHandler.createSuccessResponse("Login successful!", currentUser);
+        System.out.println(currentUser.getName());
+        sendResponse(response); //response sent
+        logger.logAction(currentUser.getId(), "LOGIN", "User logged in");
     }
 
     private void handleGetMessages() throws IOException {
@@ -158,13 +152,17 @@ public class ClientHandler implements Runnable {
 
 
     private void handleLogout() throws IOException {
+        Response response;
         if (currentUser != null) {
             AuthenticationManager.logoutUser(currentUser.getId());
-            logger.logAction(currentUser.getId(), "LOGOUT", "User logged out");
             currentUser = null;
-            sendResponse(ProtocolHandler.createSuccessResponse("Logout successful", null));
+            response = ProtocolHandler.createSuccessResponse("Logout successful", null);
+            sendResponse(response);
+            logger.logAction(currentUser.getId(), "LOGOUT", "User logged out");
         } else {
-            sendResponse(ProtocolHandler.createErrorResponse("Not logged in"));
+            response = ProtocolHandler.createErrorResponse("Not logged in");
+            sendResponse(response);
+            logger.logAction(currentUser.getId(), "LOGOUT", "User logout attempt failed");
         }
     }
 
@@ -178,7 +176,7 @@ public class ClientHandler implements Runnable {
             throw new Exception("Wrong request type: " + request.getType() + "\n Expected type: REGISTER_USER");
 
         User userToRegister = new User((String) request.getData("name"), (String) request.getData("password"), (UserRole) request.getData("role"));
-        if(AuthenticationManager.registerUser(userToRegister)) {
+        if (AuthenticationManager.registerUser(userToRegister)) {
             logger.logAction(this.currentUser.getId(), "USER REGISTER", "SUCCESS");
         }
 

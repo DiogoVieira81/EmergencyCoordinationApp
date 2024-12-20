@@ -2,10 +2,12 @@ package models;
 
 import enums.UserRole;
 import org.bson.Document;
+import server.DatabaseManager;
 
 import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class User implements Serializable {
@@ -31,7 +33,7 @@ public class User implements Serializable {
     public User(String name, String username, String password, UserRole role) {
         this.name = name;
         this.username = username;
-        this.password = this.hashPassword(password);
+        this.password = password;
         this.role = role;
         this.id = name + counter.incrementAndGet(); // Gera um ID único
         this.isOnline = false;
@@ -56,7 +58,7 @@ public class User implements Serializable {
     }
 
     public String getPassword() {
-        return this.password;
+        return DatabaseManager.hashPassword(this.password);
     }
 
     public boolean isOnline() {
@@ -79,7 +81,7 @@ public class User implements Serializable {
 
     // Method to authenticate user
     public boolean authenticate(String inputPassword) {
-        return this.password.equals(inputPassword);
+        return Objects.requireNonNull(DatabaseManager.getUserByUsername(this.getUsername())).password.equals(inputPassword);
     }
 
     public Document toDocument() {

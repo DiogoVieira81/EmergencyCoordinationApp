@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -67,7 +66,7 @@ public class Client {
         }
     }
 
-//    public boolean login(String username, String password) throws IOException {
+    //    public boolean login(String username, String password) throws IOException {
 //        try {
 //            // Create a login request object
 //            ProtocolHandler.Request loginRequest = ProtocolHandler.createLoginRequest(username, password);

@@ -3,9 +3,12 @@ package utils;
 import enums.OperationType;
 import models.Message;
 import models.User;
+import server.DatabaseManager;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
