@@ -7,9 +7,6 @@
     <list default="true" id="069c91f5-17fb-43ce-95ab-2d784f969fb2" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/operations.log" beforeDir="false" afterPath="$PROJECT_DIR$/operations.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/models/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server/ClientHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/ClientHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server/DatabaseManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/DatabaseManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/utils/AuthenticationManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/AuthenticationManager.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -92,7 +89,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Run Server" type="Application" factoryName="Application">
+    <configuration name="Run Server" type="Application" factoryName="Application" singleton="false">
       <option name="MAIN_CLASS_NAME" value="server.Server" />
       <module name="ac_8200690_8200330" />
       <method v="2">

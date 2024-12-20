@@ -45,10 +45,15 @@ public class AuthenticationManager {
     public static User authenticateUser(String username, String password) {
         User user = DatabaseManager.getUserByUsername(username);
         String hashedPassword = hashPassword(password);
-        if (user != null && user.authenticate(hashedPassword)) {
-            return user;
+
+        if (user == null) {
+            System.out.println("Username doesn't exist.");
         }
-        return null;
+        assert user != null;
+        if (!user.authenticate(hashedPassword)) {
+            System.out.println("Invalid password.");
+        }
+        return user;
     }
 
     public static void logoutUser(String sessionToken) {
